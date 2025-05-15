@@ -43,7 +43,7 @@ export default function Integrante({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#F5F6FA",
+    backgroundColor: "black",
     borderRadius: 16,
     padding: 24,
     alignItems: "center",
@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   nome: {
     fontSize: 18,
     fontWeight: "bold",
+    color: 'white',
     marginBottom: 4,
   },
   rm: {
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   link: {
-    color: "#007AFF",
+    color: "#5e17eb",
     fontSize: 16,
     fontWeight: "500",
   },

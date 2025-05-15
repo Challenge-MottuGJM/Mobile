@@ -1,11 +1,17 @@
 import { Stack, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import React from "react";
-import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function Home() {
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#ff5f96', '#ffe66d']}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.container}
+    >
       <Stack.Screen
         options={{
           headerShown: false,
@@ -25,14 +31,13 @@ export default function Home() {
           <Text style={styles.buttonText}>Desenvolvedores</Text>
         </TouchableOpacity>
       </ScrollView>
-    </View>
+    </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#DBD7D7',
     alignItems: 'center',
     justifyContent: 'center',
     padding: 16,
@@ -47,9 +52,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 30,
+    color: "#5e17eb"
   },
   button: {
-    backgroundColor: '#0A3CFF',
+    backgroundColor: "#5e17eb",
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 12,
@@ -58,10 +64,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   logo: {
-    width: 300,
-    height: 150,
+    width: 1800,
+    height: 550,
     marginTop: 70,
-    marginBottom: 100,
+    marginBottom: 80,
   },
   buttonText: {
     color: '#ffffff',
