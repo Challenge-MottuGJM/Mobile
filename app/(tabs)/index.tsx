@@ -15,28 +15,12 @@ export default function Home() {
       <StatusBar style="light" />
 
       <Image
-        source={require('../../assets/voce_seguro.png')}
+        source={require('../../assets/easyfinder.png')}
         style={styles.logo}
         resizeMode="contain"
       />
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/denuncia")}>
-          <Text style={styles.buttonText}>Denúncia</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/apoio")}>
-          <Text style={styles.buttonText}>Apoio e Ajuda</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/dados")}>
-          <Text style={styles.buttonText}>Dados</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/info")}>
-          <Text style={styles.buttonText}>Informações</Text>
-        </TouchableOpacity>
-
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/integrantes")}>
           <Text style={styles.buttonText}>Desenvolvedores</Text>
         </TouchableOpacity>

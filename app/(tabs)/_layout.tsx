@@ -11,36 +11,7 @@ export default function TabLayout() {
                     tabBarIcon: ({ color }) => <Ionicons size={28} name="home" color={color} />,
                 }}
             />
-            <Tabs.Screen
-                name="denuncia"
-                options={{
-                    title: 'Denuncia',
-                    tabBarIcon: ({ color }) => <Ionicons size={28} name="alert-circle" color={color} />,
-                }}
-            />
-            <Tabs.Screen
-                name="apoio"
-                options={{
-                    title: 'Apoio',
-                    tabBarIcon: ({ color }) => <Ionicons size={28} name="heart" color={color} />,
-                }}
-            />
-            <Tabs.Screen
-                name="dados"
-                options={{
-                    title: 'Dados',
-                    tabBarIcon: ({ color }) => <Ionicons size={28} name="analytics" color={color} />,
-                }}
-            />
-
-            <Tabs.Screen
-                name="info"
-                options={{
-                    title: 'Informações',
-                    tabBarIcon: ({ color }) => <Ionicons size={28} name="information-circle" color={color} />,
-                }}
-            />
-
+            
             <Tabs.Screen
                 name="integrantes"
                 options={{
