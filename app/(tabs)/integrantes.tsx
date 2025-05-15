@@ -17,7 +17,7 @@ export default function IntegrantesPage() {
         nome="Julio Cesar"
         rm="557298"
         sala="2TDSPF"
-        imgSrc={require("../../assets/julio.JPEG")}
+        imgSrc={require("../../assets/julio.jpg")}
         githubUrl="https://github.com/Julio-CRodrigues"
         linkedinUrl="https://www.linkedin.com/in/julio-cesar-rodrigues29/"
       />
@@ -26,18 +26,18 @@ export default function IntegrantesPage() {
         nome="Gustavo de Aguiar"
         rm="557707"
         sala="2TDSPF"
-        imgSrc={require("../../assets/gu.jpg")}
+        imgSrc={require("../../assets/gustavo.jpg")}
         githubUrl="https://github.com/gudeaguiar"
         linkedinUrl="https://www.linkedin.com/in/gustavo-de-aguiar-sn160308/"
       />
 
       <Integrante
-        nome="Matheus de Freitas Silva"
-        rm="552602"
+        nome="Erik Paschoalatto"
+        rm="554854"
         sala="2TDSPF"
-        imgSrc={require("")}
-        githubUrl=""
-        linkedinUrl=""
+        imgSrc={require("../../assets/erik.jpg")}
+        githubUrl="https://github.com/ozerikoz"
+        linkedinUrl="https://www.linkedin.com/in/erikpaschoalatto/"
       />
 
     </ScrollView>

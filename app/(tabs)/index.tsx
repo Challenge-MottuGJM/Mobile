@@ -15,10 +15,10 @@ export default function Home() {
       <StatusBar style="light" />
 
       <Image
-        source={require('./assets/splash-icon.png')}
+        source={require('../../assets/voce_seguro.png')}
         style={styles.logo}
         resizeMode="contain"
-      />*/
+      />
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/denuncia")}>
