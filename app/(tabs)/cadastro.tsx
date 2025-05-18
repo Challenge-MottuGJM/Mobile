@@ -1,27 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  Button,
-  StyleSheet,
-  Alert,
-  ScrollView,
-  TouchableOpacity,
-  KeyboardAvoidingView,
-  Platform
-} from 'react-native';
+  View,Text,TextInput,Button,StyleSheet,Alert,ScrollView,TouchableOpacity,KeyboardAvoidingView,Platform} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const estados = [
-  'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT',
-  'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO',
-  'RR', 'SC', 'SP', 'SE', 'TO'
+const veiculos = [
+  'Carro', 'Motocicleta'
 ];
 
-// Função para formatar datas no formato dd/mm/aaaa com barras automáticas
 function formatarData(text) {
   let digits = text.replace(/\D/g, '');
   if (digits.length > 8) digits = digits.substring(0, 8);
@@ -32,17 +19,16 @@ function formatarData(text) {
 }
 
 export default function Cadastro() {
-  const [nome, setNome] = useState('');
-  const [fabricacao, setFabricacao] = useState('');
-  const [validade, setValidade] = useState('');
-  const [quantidade, setQuantidade] = useState('');
-  const [lote, setLote] = useState('');
-  const [estado, setEstado] = useState('');
-  const [codigoBarras, setCodigoBarras] = useState('');
-  const [scannerAtivo, setScannerAtivo] = useState(false);
+  const [status, setStatus] = useState('');
+  const [admissao, setAdmissao] = useState('');
+  const [modelo, setModelo] = useState('');
+  const [marca, setMarca] = useState('');
+  const [placa, setPlaca] = useState('');
+  const [veiculo, setVeiculo] = useState('');
+  const [chassi, setChassi] = useState('');
   const [showManualInput, setShowManualInput] = useState(false);
 
-  // Estados para edição
+
   const [editando, setEditando] = useState(false);
   const [produtoEditandoId, setProdutoEditandoId] = useState(null);
 
@@ -54,25 +40,25 @@ export default function Cadastro() {
       const produtos = produtosSalvos ? JSON.parse(produtosSalvos) : [];
       const produto = produtos.find(p => p.id === id);
       if (produto) {
-        setNome(produto.nome);
-        setFabricacao(produto.fabricacao);
-        setValidade(produto.validade);
-        setQuantidade(produto.quantidade);
-        setLote(produto.lote);
-        setEstado(produto.estado);
-        setCodigoBarras(produto.codigoBarras);
+        setStatus(produto.statu);
+        setAdmissao(produto.admissao);
+        setModelo(produto.modelo);
+        setMarca(produto.marca);
+        setPlaca(produto.placa);
+        setVeiculo(produto.veiculo);
+        setChassi(produto.chassi);
         setEditando(true);
         setProdutoEditandoId(id);
       } else {
-        Alert.alert('Erro', 'Produto não encontrado para edição.');
+        Alert.alert('Erro', 'Veículo não encontrado para edição.');
       }
     } catch (error) {
       console.error(error);
     }
   };
 
-  const salvarProduto = async () => {
-    if (!nome || !fabricacao || !validade || !quantidade || !lote || !estado || !codigoBarras) {
+  const salvarVeiculo = async () => {
+    if (!status || !admissao || !modelo || !marca || !placa || !veiculo || !chassi) {
       Alert.alert('Erro', 'Preencha todos os campos.');
       return;
     }
@@ -82,39 +68,21 @@ export default function Cadastro() {
       const produtos = produtosSalvos ? JSON.parse(produtosSalvos) : [];
 
       if (editando) {
-        // Atualizar produto existente
-        const index = produtos.findIndex(p => p.id === produtoEditandoId);
-        if (index !== -1) {
-          produtos[index] = {
-            id: produtoEditandoId,
-            nome,
-            fabricacao,
-            validade,
-            quantidade,
-            lote,
-            estado,
-            codigoBarras
-          };
-          await AsyncStorage.setItem('produtos', JSON.stringify(produtos));
-          Alert.alert('Sucesso', 'Produto atualizado com sucesso!');
-        } else {
-          Alert.alert('Erro', 'Produto para edição não encontrado.');
-        }
-      } else {
-        // Salvar novo produto
-        const novoProduto = {
+
+        // Salvar novo veículo
+        const novaMoto = {
           id: Date.now(),
-          nome,
-          fabricacao,
-          validade,
-          quantidade,
-          lote,
-          estado,
-          codigoBarras
+          status,
+          admissao,
+          modelo,
+          marca,
+          placa,
+          veiculo,
+          chassi
         };
-        produtos.push(novoProduto);
+        produtos.push(novaMoto);
         await AsyncStorage.setItem('produtos', JSON.stringify(produtos));
-        Alert.alert('Sucesso', 'Produto cadastrado com sucesso!');
+        Alert.alert('Sucesso', 'Veículo cadastrado com sucesso!');
       }
 
       limparCampos();
@@ -122,86 +90,91 @@ export default function Cadastro() {
       setProdutoEditandoId(null);
 
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível salvar o produto.');
+      Alert.alert('Erro', 'Não foi possível salvar o veículo.');
       console.error(error);
     }
   };
 
   const limparCampos = () => {
-    setNome('');
-    setFabricacao('');
-    setValidade('');
-    setQuantidade('');
-    setLote('');
-    setEstado('');
-    setCodigoBarras('');
-    setScannerAtivo(false);
+    setStatus('');
+    setAdmissao('');
+    setModelo('');
+    setMarca('');
+    setPlaca('');
+    setVeiculo('');
+    setChassi('');
     setShowManualInput(false);
   };
 
 
   return (
     <LinearGradient
-      colors={['#2951ff', '#ff5959']}
-      style={StyleSheet.absoluteFill}
-    >
+          colors={['#ff5f96', '#ffe66d']}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 1 }}
+          style={styles.gradient}
+        >
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}
       >
         <ScrollView style={styles.container}>
-          <Text style={styles.title}>Cadastro de Produto</Text>
+          <Text style={styles.title}>Cadastro de Veículos</Text>
 
           <TextInput
             style={styles.input}
-            placeholder="Nome do Produto"
-            value={nome}
-            onChangeText={setNome}
+            placeholder="Status"
+            value={status}
+            onChangeText={setStatus}
           />
           <TextInput
             style={styles.input}
-            placeholder="Data de Fabricação (dd/mm/aaaa)"
+            placeholder="Data de admissão do veículo (dd/mm/aaaa)"
             keyboardType="numeric"
-            value={fabricacao}
-            onChangeText={text => setFabricacao(formatarData(text))}
+            value={admissao}
+            onChangeText={text => setAdmissao(formatarData(text))}
           />
           <TextInput
             style={styles.input}
-            placeholder="Prazo de Validade (dd/mm/aaaa)"
-            keyboardType="numeric"
-            value={validade}
-            onChangeText={text => setValidade(formatarData(text))}
+            placeholder="Modelo"
+            value={modelo}
+            onChangeText={text => setModelo(formatarData(text))}
           />
           <TextInput
             style={styles.input}
-            placeholder="Quantidade"
-            keyboardType="numeric"
-            value={quantidade}
-            onChangeText={setQuantidade}
+            placeholder="Marca"
+            value={marca}
+            onChangeText={setMarca}
           />
           <TextInput
             style={styles.input}
-            placeholder="Lote (letras e números)"
-            value={lote}
-            onChangeText={setLote}
+            placeholder="Placa (letras e números)"
+            value={placa}
+            onChangeText={setPlaca}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Chassi"
+            value={chassi}
+            onChangeText={setChassi}
           />
 
-          <Text style={styles.label}>Estado de Origem</Text>
+          <Text style={styles.label}>Tipo de veículo</Text>
           <Picker
-            selectedValue={estado}
-            onValueChange={(itemValue) => setEstado(itemValue)}
+            selectedValue={veiculo}
+            onValueChange={(itemValue) => setVeiculo(itemValue)}
             style={styles.picker}
           >
-            <Picker.Item label="Selecione um estado" value="" />
-            {estados.map((uf) => (
-              <Picker.Item key={uf} label={uf} value={uf} />
+            <Picker.Item label="Selecione o tipo de veículo" value="" />
+            {veiculos.map((tipo) => (
+              <Picker.Item key={tipo} label={tipo} value={tipo} />
             ))}
           </Picker>
 
          
           <Button 
-            title={editando ? "ATUALIZAR PRODUTO" : "SALVAR PRODUTO"} 
-            onPress={salvarProduto} 
+            title={editando ? "ATUALIZAR VEÍCULO" : "SALVAR VEÍCULO"} 
+            onPress={salvarVeiculo} 
             color="#28a745" 
           />
         </ScrollView>
@@ -214,6 +187,9 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     marginTop: 40,
+    flex: 1,
+  },
+   gradient: {
     flex: 1,
   },
   title: {

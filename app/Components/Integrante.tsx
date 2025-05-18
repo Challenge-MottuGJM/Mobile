@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Image, StyleSheet, TouchableOpacity, Linking } from "react-native";
 
-type IntegranteProps = {
+type DevProps = {
   nome: string;
   rm: string;
   sala: string;
@@ -10,14 +10,14 @@ type IntegranteProps = {
   linkedinUrl: string;
 };
 
-export default function Integrante({
+export default function Dev({
   nome,
   rm,
   sala,
   imgSrc,
   githubUrl,
   linkedinUrl,
-}: IntegranteProps) {
+}: DevProps) {
   const abrirLink = (url: string) => {
     Linking.openURL(url).catch((err) => console.error("Erro ao abrir link:", err));
   };
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   link: {
-    color: "#5e17eb",
+    color: "#0A3CFF",
     fontSize: 16,
     fontWeight: "500",
   },

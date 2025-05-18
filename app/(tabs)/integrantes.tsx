@@ -4,7 +4,7 @@ import { ScrollView, StyleSheet, Text } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import Integrante from "../Components/Integrante";
 
-export default function IntegrantesPage() {
+export default function DevsPage() {
   return (
     <LinearGradient
       colors={['#ff5f96', '#ffe66d']}
@@ -15,7 +15,7 @@ export default function IntegrantesPage() {
       <ScrollView contentContainerStyle={styles.container}>
         <Stack.Screen
           options={{
-            title: "Integrantes",
+            title: "Devs",
           }}
         />
         <Text style={styles.title}>Desenvolvedores</Text>
@@ -61,7 +61,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 23,
-    color: "#5e17eb",
+    color: "#FFFFFF",
     fontWeight: "bold",
     alignSelf: "center",
     marginBottom: 24,

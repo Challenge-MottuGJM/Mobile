@@ -34,11 +34,11 @@ export default function TabLayout() {
             />
 
             <Tabs.Screen
-                name="devs"
+                name="dev"
                 options={{
                     title: 'Devs',
                     tabBarIcon: ({ color }) => (
-                        <Ionicons size={28} name="people" color={color} />
+                        <Ionicons size={28} name="desktop" color={color} />
                     ),
                 }}
             />

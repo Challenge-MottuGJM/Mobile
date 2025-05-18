@@ -58,11 +58,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 30,
-    color: "#5e17eb"
+    color: "#0A3CFF"
   },
   button: {
     backgroundColor: "#5e17eb",
     paddingVertical: 12,
+    borderColor: 'black',
     paddingHorizontal: 24,
     borderRadius: 12,
     elevation: 3,
