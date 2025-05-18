@@ -27,6 +27,12 @@ export default function Home() {
       />
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/cadastro")}>
+          <Text style={styles.buttonText}>Cadastro</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/integrantes")}>
           <Text style={styles.buttonText}>Desenvolvedores</Text>
         </TouchableOpacity>

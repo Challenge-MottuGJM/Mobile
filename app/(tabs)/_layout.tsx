@@ -23,10 +23,20 @@ export default function TabLayout() {
                 }}
             />
 
-            <Tabs.Screen
-                name="integrantes"
+             <Tabs.Screen
+                name="cadastro"
                 options={{
-                    title: 'Integrantes',
+                    title: 'Cadastro',
+                    tabBarIcon: ({ color }) => (
+                        <Ionicons size={28} name="people" color={color} />
+                    ),
+                }}
+            />
+
+            <Tabs.Screen
+                name="devs"
+                options={{
+                    title: 'Devs',
                     tabBarIcon: ({ color }) => (
                         <Ionicons size={28} name="people" color={color} />
                     ),
