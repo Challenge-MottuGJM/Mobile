@@ -5,6 +5,7 @@ export default function TabLayout() {
     return (
         <Tabs
             screenOptions={{
+                headerShown: false,
                 tabBarActiveTintColor: "#ff5f96",
                 tabBarInactiveTintColor: "#ffffff",
                 tabBarStyle: {
@@ -34,7 +35,17 @@ export default function TabLayout() {
             />
 
             <Tabs.Screen
-                name="dev"
+                name="lista"
+                options={{
+                    title: 'Lista',
+                    tabBarIcon: ({ color }) => (
+                        <Ionicons size={28} name="list" color={color} />
+                    ),
+                }}
+            />
+
+            <Tabs.Screen
+                name="integrantes"
                 options={{
                     title: 'Devs',
                     tabBarIcon: ({ color }) => (

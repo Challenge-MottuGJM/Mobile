@@ -33,30 +33,6 @@ export default function Cadastro() {
   const [produtoEditandoId, setProdutoEditandoId] = useState(null);
 
 
-  // Função para carregar um produto para editar
-  const carregarProdutoParaEditar = async (id) => {
-    try {
-      const produtosSalvos = await AsyncStorage.getItem('produtos');
-      const produtos = produtosSalvos ? JSON.parse(produtosSalvos) : [];
-      const produto = produtos.find(p => p.id === id);
-      if (produto) {
-        setStatus(produto.statu);
-        setAdmissao(produto.admissao);
-        setModelo(produto.modelo);
-        setMarca(produto.marca);
-        setPlaca(produto.placa);
-        setVeiculo(produto.veiculo);
-        setChassi(produto.chassi);
-        setEditando(true);
-        setProdutoEditandoId(id);
-      } else {
-        Alert.alert('Erro', 'Veículo não encontrado para edição.');
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   const salvarVeiculo = async () => {
     if (!status || !admissao || !modelo || !marca || !placa || !veiculo || !chassi) {
       Alert.alert('Erro', 'Preencha todos os campos.');
@@ -64,8 +40,8 @@ export default function Cadastro() {
     }
 
     try {
-      const produtosSalvos = await AsyncStorage.getItem('produtos');
-      const produtos = produtosSalvos ? JSON.parse(produtosSalvos) : [];
+      const cadastrosveiculosSalvos = await AsyncStorage.getItem('cadastrosveiculos');
+      const cadastrosveiculos = cadastrosveiculosSalvos ? JSON.parse(cadastrosveiculosSalvos) : [];
 
       if (editando) {
 
@@ -80,14 +56,12 @@ export default function Cadastro() {
           veiculo,
           chassi
         };
-        produtos.push(novaMoto);
-        await AsyncStorage.setItem('produtos', JSON.stringify(produtos));
+        cadastrosveiculos.push(novaMoto);
+        await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(cadastrosveiculos));
         Alert.alert('Sucesso', 'Veículo cadastrado com sucesso!');
       }
 
       limparCampos();
-      setEditando(false);
-      setProdutoEditandoId(null);
 
     } catch (error) {
       Alert.alert('Erro', 'Não foi possível salvar o veículo.');
@@ -138,7 +112,7 @@ export default function Cadastro() {
             style={styles.input}
             placeholder="Modelo"
             value={modelo}
-            onChangeText={text => setModelo(formatarData(text))}
+            onChangeText={setModelo}
           />
           <TextInput
             style={styles.input}
