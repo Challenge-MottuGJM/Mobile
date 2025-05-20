@@ -4,6 +4,7 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useLocalSearchParams } from 'expo-router';
 
 const veiculos = [
   'Carro', 'Motocicleta'
@@ -18,6 +19,8 @@ function formatarData(text) {
   return digits.substring(0, 2) + '/' + digits.substring(2, 4) + '/' + digits.substring(4);
 }
 
+
+
 export default function Cadastro() {
   const [status, setStatus] = useState('');
   const [admissao, setAdmissao] = useState('');
@@ -27,47 +30,56 @@ export default function Cadastro() {
   const [veiculo, setVeiculo] = useState('');
   const [chassi, setChassi] = useState('');
   const [showManualInput, setShowManualInput] = useState(false);
+  const params = useLocalSearchParams();
 
 
   const [editando, setEditando] = useState(false);
   const [produtoEditandoId, setProdutoEditandoId] = useState(null);
 
 
+
+  
   const salvarVeiculo = async () => {
-    if (!status || !admissao || !modelo || !marca || !placa || !veiculo || !chassi) {
-      Alert.alert('Erro', 'Preencha todos os campos.');
-      return;
+  if (!status || !admissao || !modelo || !marca || !placa || !veiculo || !chassi) {
+    Alert.alert('Erro', 'Preencha todos os campos.');
+    return;
+  }
+
+  try {
+    const cadastrosveiculosSalvos = await AsyncStorage.getItem('cadastrosveiculos');
+    let cadastrosveiculos = cadastrosveiculosSalvos ? JSON.parse(cadastrosveiculosSalvos) : [];
+
+    if (editando && produtoEditandoId !== null) {
+      cadastrosveiculos = cadastrosveiculos.map((item) =>
+        item.id === produtoEditandoId
+          ? { ...item, status, admissao, modelo, marca, placa, veiculo, chassi }
+          : item
+      );
+    } else {
+      const novoVeiculo = {
+        id: Date.now(),
+        status,
+        admissao,
+        modelo,
+        marca,
+        placa,
+        veiculo,
+        chassi,
+      };
+      cadastrosveiculos.push(novoVeiculo);
     }
 
-    try {
-      const cadastrosveiculosSalvos = await AsyncStorage.getItem('cadastrosveiculos');
-      const cadastrosveiculos = cadastrosveiculosSalvos ? JSON.parse(cadastrosveiculosSalvos) : [];
+    await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(cadastrosveiculos));
+    Alert.alert('Sucesso', editando ? 'Veículo atualizado com sucesso!' : 'Veículo cadastrado com sucesso!');
+    limparCampos();
+    setEditando(false);
+    setProdutoEditandoId(null);
+  } catch (error) {
+    Alert.alert('Erro', 'Não foi possível salvar o veículo.');
+    console.error(error);
+  }
+};
 
-      if (editando) {
-
-        // Salvar novo veículo
-        const novaMoto = {
-          id: Date.now(),
-          status,
-          admissao,
-          modelo,
-          marca,
-          placa,
-          veiculo,
-          chassi
-        };
-        cadastrosveiculos.push(novaMoto);
-        await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(cadastrosveiculos));
-        Alert.alert('Sucesso', 'Veículo cadastrado com sucesso!');
-      }
-
-      limparCampos();
-
-    } catch (error) {
-      Alert.alert('Erro', 'Não foi possível salvar o veículo.');
-      console.error(error);
-    }
-  };
 
   const limparCampos = () => {
     setStatus('');

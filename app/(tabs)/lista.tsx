@@ -1,76 +1,85 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  FlatList,
   StyleSheet,
+  FlatList,
   TouchableOpacity,
-  Alert
+  Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useIsFocused } from '@react-navigation/native';
+import { LinearGradient } from 'expo-linear-gradient';
 
-export default function ListaVeiculos() {
-  const [veiculos, setVeiculos] = useState([]);
+export default function Lista() {
+  const [cadastros, setCadastros] = useState([]);
+  const isFocused = useIsFocused();
   const router = useRouter();
 
   useEffect(() => {
-    carregarVeiculos();
-  }, []);
+    if (isFocused) {
+      carregarCadastros();
+    }
+  }, [isFocused]);
 
-  const carregarVeiculos = async () => {
+  const carregarCadastros = async () => {
     try {
-      const cadastrosveiculosSalvos = await AsyncStorage.getItem('veiculos');
-      if (cadastrosveiculosSalvos !== null) {
-        setVeiculos(JSON.parse(cadastrosveiculosSalvos));
+      const dados = await AsyncStorage.getItem('cadastrosveiculos');
+      if (dados) {
+        setCadastros(JSON.parse(dados));
       }
     } catch (error) {
-      console.error('Erro ao carregar os veículos:', error);
+      console.log('Erro ao carregar cadastros', error);
     }
   };
 
-  const excluirVeiculo = async (id) => {
-    Alert.alert('Confirmar exclusão', 'Deseja excluir este veículo?', [
+  const excluir = async (id) => {
+    Alert.alert('Confirmação', 'Deseja realmente excluir este veículo?', [
       {
         text: 'Cancelar',
         style: 'cancel',
       },
       {
         text: 'Excluir',
-        onPress: async () => {
-          const novaLista = veiculos.filter((item) => item.id !== id);
-          setVeiculos(novaLista);
-          await AsyncStorage.setItem('veiculos', JSON.stringify(novaLista));
-        },
         style: 'destructive',
+        onPress: async () => {
+          const novaLista = cadastros.filter((item) => item.id !== id);
+          await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(novaLista));
+          setCadastros(novaLista);
+        },
       },
     ]);
   };
 
-  const editarVeiculo = (veiculo) => {
+  const editar = (item) => {
     router.push({
-      pathname: '/cadastro',
-      params: { veiculo: JSON.stringify(veiculo) }
+      pathname: '/editar',
+      params: { ...item },
     });
   };
 
   const renderItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>Nome: {item.nome}</Text>
-      <Text style={styles.itemText}>Fabricação: {item.fabricacao}</Text>
-      <Text style={styles.itemText}>Validade: {item.validade}</Text>
-      <Text style={styles.itemText}>Quantidade: {item.quantidade}</Text>
-      <Text style={styles.itemText}>Lote: {item.lote}</Text>
-      <Text style={styles.itemText}>Estado: {item.estado}</Text>
-      <Text style={styles.itemText}>Código de Barras: {item.codigoBarras}</Text>
+    <View style={styles.item}>
+      <Text style={styles.titulo}>{item.modelo} ({item.marca})</Text>
+      <Text>Status: {item.status}</Text>
+      <Text>Admissão: {item.admissao}</Text>
+      <Text>Placa: {item.placa}</Text>
+      <Text>Veículo: {item.veiculo}</Text>
+      <Text>Chassi: {item.chassi}</Text>
 
-      <View style={styles.botoesContainer}>
-        <TouchableOpacity style={styles.botaoEditar} onPress={() => editarVeiculo(item)}>
+      <View style={styles.botoes}>
+        <TouchableOpacity
+          style={styles.botaoEditar}
+          onPress={() => editar(item)}
+        >
           <Text style={styles.textoBotao}>Editar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.botaoExcluir} onPress={() => excluirVeiculo(item.id)}>
+        <TouchableOpacity
+          style={styles.botaoExcluir}
+          onPress={() => excluir(item.id)}
+        >
           <Text style={styles.textoBotao}>Excluir</Text>
         </TouchableOpacity>
       </View>
@@ -79,74 +88,68 @@ export default function ListaVeiculos() {
 
   return (
     <LinearGradient
-          colors={['#ff5f96', '#ffe66d']}
-          start={{ x: 0, y: 1 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.container}
-        >
-      <Text style={styles.title}>Lista de Veículos salvos</Text>
+      colors={['#ff5f96', '#ffe66d']}
+      start={{ x: 0, y: 1 }}
+      end={{ x: 1, y: 1 }}
+      style={styles.gradient}
+    >
       <FlatList
-        data={veiculos}
-        keyExtractor={(item) => item.id.toString()}
+        data={cadastros}
+        keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        ListEmptyComponent={<Text style={styles.emptyText}>Nenhum veículo cadastrado.</Text>}
-        contentContainerStyle={{ paddingBottom: 16 }}
+        contentContainerStyle={styles.lista}
+        ListEmptyComponent={<Text style={styles.vazio}>Nenhum veículo cadastrado.</Text>}
       />
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  gradient: {
     flex: 1,
-    padding: 16,
   },
-  title: {
-    fontSize: 22,
+  lista: {
+    padding: 20,
+    paddingBottom: 80,
+  },
+  item: {
+    backgroundColor: '#f2f2f2',
+    padding: 15,
+    marginBottom: 15,
+    borderRadius: 10,
+  },
+  titulo: {
+    fontSize: 18,
     fontWeight: 'bold',
-    marginTop: 40,
-    marginBottom: 16,
-    textAlign: 'center',
-    color: '#fff',
+    marginBottom: 5,
   },
-  itemContainer: {
-    backgroundColor: '#ffffffcc',
-    borderRadius: 8,
-    padding: 12,
-    marginBottom: 12,
-  },
-  itemText: {
-    fontSize: 14,
-    marginBottom: 4,
-    color: '#000',
-  },
-  botoesContainer: {
+  botoes: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginTop: 10,
   },
   botaoEditar: {
-    backgroundColor: '#2951ff',
-    padding: 8,
-    borderRadius: 5,
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 8,
     flex: 1,
-    marginRight: 8,
+    marginRight: 10,
   },
   botaoExcluir: {
-    backgroundColor: '#ff0a0a',
-    padding: 8,
-    borderRadius: 5,
+    backgroundColor: '#dc3545',
+    padding: 10,
+    borderRadius: 8,
     flex: 1,
-    marginLeft: 8,
   },
   textoBotao: {
     color: '#fff',
-    textAlign: 'center',
     fontWeight: 'bold',
-  },
-  emptyText: {
     textAlign: 'center',
-    marginTop: 20,
-    color: '#fff',
+  },
+  vazio: {
+    textAlign: 'center',
+    marginTop: 40,
+    fontSize: 16,
+    color: '#666',
   },
 });

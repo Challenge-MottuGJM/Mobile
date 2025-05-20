@@ -31,9 +31,16 @@ export default function Home() {
           <Text style={styles.buttonText}>Cadastro</Text>
         </TouchableOpacity>
       </ScrollView>
+
       <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/lista")}>
           <Text style={styles.buttonText}>Lista</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      <ScrollView contentContainerStyle={styles.linksContainer}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/vagas")}>
+          <Text style={styles.buttonText}>Vagas</Text>
         </TouchableOpacity>
       </ScrollView>
       
