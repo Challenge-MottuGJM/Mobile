@@ -109,7 +109,7 @@ export default function Cadastro() {
 
           <TextInput
             style={styles.input}
-            placeholder="Status"
+            placeholder="Status (tipo de problema)"
             value={status}
             onChangeText={setStatus}
           />
@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 22,
-    color: 'white',
+    color: '#333',
     fontWeight: 'bold',
     marginTop: 10,
     marginBottom: 10,

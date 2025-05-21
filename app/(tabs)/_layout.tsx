@@ -1,5 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { Tabs } from 'expo-router';
+import { Feather } from '@expo/vector-icons';
+
 
 export default function TabLayout() {
     return (
@@ -40,6 +42,16 @@ export default function TabLayout() {
                     title: 'Lista',
                     tabBarIcon: ({ color }) => (
                         <Ionicons size={28} name="list" color={color} />
+                    ),
+                }}
+            />
+
+            <Tabs.Screen
+                name="editar"
+                options={{
+                    title: 'Editar',
+                    tabBarIcon: ({ color }) => (
+                    <Feather name="edit" size={24} color={color} />
                     ),
                 }}
             />

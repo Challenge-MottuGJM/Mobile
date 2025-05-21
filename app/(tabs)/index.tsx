@@ -39,6 +39,12 @@ export default function Home() {
       </ScrollView>
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/editar")}>
+          <Text style={styles.buttonText}>Editar</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/vagas")}>
           <Text style={styles.buttonText}>Vagas</Text>
         </TouchableOpacity>

@@ -6,6 +6,7 @@ import {
   FlatList,
   TouchableOpacity,
   Alert,
+  ScrollView,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
@@ -93,13 +94,17 @@ export default function Lista() {
       end={{ x: 1, y: 1 }}
       style={styles.gradient}
     >
-      <FlatList
-        data={cadastros}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        contentContainerStyle={styles.lista}
-        ListEmptyComponent={<Text style={styles.vazio}>Nenhum veículo cadastrado.</Text>}
-      />
+      <View style={styles.wrapper}>
+        <Text style={styles.tituloPagina}>Veículos Cadastrados</Text>
+
+        <FlatList
+          data={cadastros}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          contentContainerStyle={styles.lista}
+          ListEmptyComponent={<Text style={styles.vazio}>Nenhum veículo cadastrado.</Text>}
+        />
+      </View>
     </LinearGradient>
   );
 }
@@ -108,12 +113,23 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
+  wrapper: {
+    flex: 1,
+    paddingTop: 60,
+    paddingHorizontal: 20,
+  },
+  tituloPagina: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#333',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
   lista: {
-    padding: 20,
     paddingBottom: 80,
   },
   item: {
-    backgroundColor: '#f2f2f2',
+    backgroundColor: '#ffffffcc',
     padding: 15,
     marginBottom: 15,
     borderRadius: 10,

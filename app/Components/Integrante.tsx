@@ -43,27 +43,22 @@ export default function Dev({
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "black",
+    backgroundColor: "rgba(255,255,255,0.4)",
     borderRadius: 16,
     padding: 24,
     alignItems: "center",
     marginBottom: 24,
-    shadowColor: "#5e17eb",
-    shadowOffset: { width: 8, height: 9 },
-    shadowOpacity: 0.01,
-    shadowRadius: 6,
-    elevation: 4,
   },
   foto: {
-    width: 110,
-    height: 110,
+    width: 125,
+    height: 115,
     borderRadius: 55,
     marginBottom: 16,
   },
   nome: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
-    color: 'white',
+    color: 'black',
     marginBottom: 4,
   },
   rm: {

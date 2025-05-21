@@ -1,78 +1,98 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-
-type Moto = {
-  id: string;
-  modelo: string;
-  placa: string;
-};
+import { BlurView } from 'expo-blur';
 
 type Vaga = {
   id: string;
-  moto?: Moto;
+  setor: string;
+  ocupada: boolean;
 };
 
-const TOTAL_LINHAS = 9;
-const TOTAL_COLUNAS = 6;
+const TOTAL_VAGAS = 54;
+const TOTAL_COLUNAS = 5;
+
+const setores = ['Análise', 'Problemas mecânicos', 'Problemas externos'];
 
 const Estacionamento = () => {
-  const [vagas, setVagas] = useState<Vaga[][]>([]);
+  const [vagasPorSetor, setVagasPorSetor] = useState<Record<string, Vaga[][]>>({});
 
   useEffect(() => {
-    const carregarVagas = async () => {
-      const dados = await AsyncStorage.getItem('motos');
-      const motos: Moto[] = dados ? JSON.parse(dados) : [];
+    const inicializarVagas = () => {
+      let todasVagas: Vaga[] = [];
 
-      let todasVagas: Vaga[] = Array.from({ length: TOTAL_LINHAS * TOTAL_COLUNAS }, (_, i) => ({
-        id: `V${i + 1}`,
-      }));
+      for (let i = 0; i < TOTAL_VAGAS; i++) {
+        const setorIndex = Math.floor(i / 18); // 18 vagas por setor
+        todasVagas.push({
+          id: `V${i + 1}`,
+          setor: setores[setorIndex],
+          ocupada: false,
+        });
+      }
 
-      const indicesAleatorios = [...todasVagas.keys()]
-        .sort(() => 0.5 - Math.random())
-        .slice(0, motos.length);
+      // Ocupa 3 vagas aleatórias por setor
+      setores.forEach((setor) => {
+        const indicesSetor = todasVagas
+          .map((vaga, i) => (vaga.setor === setor ? i : -1))
+          .filter((i) => i !== -1);
 
-      indicesAleatorios.forEach((idx, i) => {
-        todasVagas[idx].moto = motos[i];
+        const ocupadas = indicesSetor
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 3);
+
+        ocupadas.forEach((i) => {
+          todasVagas[i].ocupada = true;
+        });
       });
 
-      const matriz = Array.from({ length: TOTAL_LINHAS }, (_, row) =>
-        todasVagas.slice(row * TOTAL_COLUNAS, (row + 1) * TOTAL_COLUNAS)
-      );
+      const organizadas: Record<string, Vaga[][]> = {};
 
-      setVagas(matriz);
+      setores.forEach((setor) => {
+        const vagasSetor = todasVagas.filter((vaga) => vaga.setor === setor);
+        const linhas = Array.from({ length: vagasSetor.length / TOTAL_COLUNAS }, (_, row) =>
+          vagasSetor.slice(row * TOTAL_COLUNAS, (row + 1) * TOTAL_COLUNAS)
+        );
+        organizadas[setor] = linhas;
+      });
+
+      setVagasPorSetor(organizadas);
     };
 
-    carregarVagas();
+    inicializarVagas();
   }, []);
 
   return (
     <LinearGradient
-      colors={['#000', '#242424']}
+      colors={['#ff5f96', '#ffe66d']}
       start={{ x: 0, y: 1 }}
       end={{ x: 1, y: 1 }}
       style={styles.gradient}
     >
-      <View style={styles.container}>
-        {vagas.map((linha, rowIdx) => (
-          <View key={rowIdx} style={styles.row}>
-            {linha.map((vaga) => (
-              <TouchableOpacity
-                key={vaga.id}
-                style={[
-                  styles.vaga,
-                  { backgroundColor: vaga.moto ? '#ff6666' : '#66cc66' },
-                ]}
-              >
-                <Text style={styles.text}>
-                  {vaga.moto ? vaga.moto.modelo : 'Livre'}
-                </Text>
-              </TouchableOpacity>
+      <ScrollView contentContainerStyle={styles.container}>
+         <Text style={styles.title}>Vagas</Text>
+        {setores.map((setor) => (
+          <BlurView intensity={50} tint="light" style={styles.card} key={setor}>
+            <Text style={styles.setorTitulo}>{setor}</Text>
+            {vagasPorSetor[setor]?.map((linha, rowIdx) => (
+              <View key={rowIdx} style={styles.row}>
+                {linha.map((vaga) => (
+                  <TouchableOpacity
+                    key={vaga.id}
+                    style={[
+                      styles.vaga,
+                      { backgroundColor: vaga.ocupada ? '#ff4d4d' : '#66cc66' },
+                    ]}
+                  >
+                    <Text style={styles.text}>
+                      {vaga.ocupada ? 'Ocupado' : vaga.id}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
             ))}
-          </View>
+          </BlurView>
         ))}
-      </View>
+      </ScrollView>
     </LinearGradient>
   );
 };
@@ -80,11 +100,32 @@ const Estacionamento = () => {
 const styles = StyleSheet.create({
   gradient: {
     flex: 1,
-    padding: 16,
+    paddingTop: 32,
   },
   container: {
-    flex: 1,
-    justifyContent: 'center',
+    padding: 16,
+    paddingBottom: 64,
+  },
+  title: {
+    fontSize: 23,
+    color: "#333",
+    fontWeight: "bold",
+    alignSelf: "center",
+    marginBottom: 24,
+    marginTop: 30,
+  },
+  card: {
+    borderRadius: 12,
+    padding: 16,
+    marginBottom: 24,
+    overflow: 'hidden',
+  },
+  setorTitulo: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 12,
+    textAlign: 'center',
   },
   row: {
     flexDirection: 'row',
@@ -92,8 +133,8 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   vaga: {
-    width: 50,
-    height: 50,
+    width: 60,
+    height: 60,
     margin: 4,
     borderRadius: 8,
     justifyContent: 'center',

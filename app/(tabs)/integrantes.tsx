@@ -3,6 +3,7 @@ import React from "react";
 import { ScrollView, StyleSheet, Text } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import Integrante from "../Components/Integrante";
+import { BlurView } from 'expo-blur';
 
 export default function DevsPage() {
   return (
@@ -21,6 +22,15 @@ export default function DevsPage() {
         <Text style={styles.title}>Desenvolvedores</Text>
 
         <Integrante
+          nome="Gustavo de Aguiar"
+          rm="557707"
+          sala="2TDSPF"
+          imgSrc={require("../../assets/gu.png")}
+          githubUrl="https://github.com/gudeaguiar"
+          linkedinUrl="https://www.linkedin.com/in/gustavo-de-aguiar-sn160308/"
+        />
+
+        <Integrante
           nome="Julio Cesar"
           rm="557298"
           sala="2TDSPF"
@@ -29,14 +39,7 @@ export default function DevsPage() {
           linkedinUrl="https://www.linkedin.com/in/julio-cesar-rodrigues29/"
         />
 
-        <Integrante
-          nome="Gustavo de Aguiar"
-          rm="557707"
-          sala="2TDSPF"
-          imgSrc={require("../../assets/gu.png")}
-          githubUrl="https://github.com/gudeaguiar"
-          linkedinUrl="https://www.linkedin.com/in/gustavo-de-aguiar-sn160308/"
-        />
+        
 
         <Integrante
           nome="Matheus de Freitas Silva"
@@ -61,11 +64,11 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 23,
-    color: "#FFFFFF",
+    color: "#333",
     fontWeight: "bold",
     alignSelf: "center",
     marginBottom: 24,
-    marginTop: 30,
+    marginTop: 40,
   },
   githubUrl: {
     color: "#5e17eb",

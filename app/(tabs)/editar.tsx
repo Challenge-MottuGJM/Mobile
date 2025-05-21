@@ -86,19 +86,25 @@ export default function Editar() {
   };
 
   return (
-    <LinearGradient colors={['#ffecd2', '#fcb69f']} style={styles.gradient}>
+      <LinearGradient
+              colors={['#ff5f96', '#ffe66d']}
+              start={{ x: 0, y: 1 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.gradient}
+      >
       <ScrollView contentContainerStyle={styles.container}>
         <Text style={styles.titulo}>Editar Veículo</Text>
 
         <TextInput
           style={styles.input}
-          placeholder="Status"
+          placeholder="Status (tipo de problema)"
           value={status}
           onChangeText={setStatus}
         />
         <TextInput
           style={styles.input}
-          placeholder="Admissão"
+          placeholder="Data de admissão"
+          keyboardType="numeric"
           value={admissao}
           onChangeText={setAdmissao}
         />
@@ -150,7 +156,7 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   titulo: {
-    fontSize: 26,
+    fontSize: 23,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
