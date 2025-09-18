@@ -3,14 +3,20 @@ import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../../context/themeContext';
+import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
 
-export default function Home() {
+
+export default function Tela() {
+  const { isDark } = useTheme();
+  const colors = isDark ? DARK_BG : LIGHT_BG;
+
   return (
     <LinearGradient
-      colors={['#ff5f96', '#ffe66d']}
-      start={{ x: 0, y: 1 }}
+      colors={colors}
+      start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
-      style={styles.container}
+      style={{ flex: 1 }}
     >
       <Stack.Screen
         options={{
@@ -73,7 +79,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: 20,
-    color: "#5e17eb"
+    color: "#5e17eb",
   },
   button: {
     backgroundColor: "#5e17eb",
@@ -94,5 +100,6 @@ const styles = StyleSheet.create({
     color: '#ffffff',
     fontWeight: 'bold',
     fontSize: 16,
+    fontFamily: 'Inter_600SemiBold',
   },
 });

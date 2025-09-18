@@ -4,22 +4,27 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { Feather } from '@expo/vector-icons';
 import ThemeFAB from '../Components/themeFAB';
 import { useTheme } from '../../context/themeContext';
+import ThemedBackground from '../Components/themedBackground';
 
 export default function TabLayout() {
   const { isDark } = useTheme();
+
   const active = '#ff5f96';
   const inactive = isDark ? '#B0B0B0' : '#606060';
-  const bg = isDark ? '#000' : '#fff';
   const border = isDark ? '#272727' : '#E6E6E6';
+  const tabBg = isDark ? '#000000' : '#ffffff';
 
   return (
-    <View style={styles.container}>
+    <ThemedBackground>
       <Tabs
         screenOptions={{
           headerShown: false,
           tabBarActiveTintColor: active,
           tabBarInactiveTintColor: inactive,
-          tabBarStyle: { backgroundColor: bg, borderTopColor: border },
+          tabBarStyle: {
+            backgroundColor: tabBg,
+            borderTopColor: border,
+          },
         }}
       >
         <Tabs.Screen name="index" options={{ title: 'Inicio', tabBarIcon: ({ color }) => (<Ionicons size={28} name="home" color={color} />) }} />
@@ -30,7 +35,7 @@ export default function TabLayout() {
         <Tabs.Screen name="integrantes" options={{ title: 'Devs', tabBarIcon: ({ color }) => (<Ionicons size={28} name="desktop" color={color} />) }} />
       </Tabs>
       <ThemeFAB />
-    </View>
+    </ThemedBackground>
   );
 }
 

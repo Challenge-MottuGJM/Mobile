@@ -6,7 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 type ThemePreference = 'light' | 'dark' | 'system';
 type ThemeContextValue = {
   preference: ThemePreference;
-  colorScheme: Exclude<ColorSchemeName, null>; // 'light' | 'dark'
+  colorScheme: Exclude<ColorSchemeName, null>;
   setPreference: (pref: ThemePreference) => void;
   isDark: boolean;
 };

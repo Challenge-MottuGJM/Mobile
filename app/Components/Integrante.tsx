@@ -63,11 +63,11 @@ const styles = StyleSheet.create({
   },
   rm: {
     fontSize: 14,
-    color: "#555",
+    color: "#000000ff",
   },
   sala: {
     fontSize: 14,
-    color: "#555",
+    color: "#000000ff",
     marginBottom: 12,
   },
   socialContainer: {

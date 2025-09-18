@@ -1,20 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  Alert,
-  ScrollView,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from "../../context/themeContext";
+import { LIGHT_BG, DARK_BG } from "../../theme/gradients";
 
 export default function Editar() {
   const router = useRouter();
   const params = useLocalSearchParams();
+  const { isDark } = useTheme();
+  const colors = isDark ? DARK_BG : LIGHT_BG;
 
   const [status, setStatus] = useState('');
   const [admissao, setAdmissao] = useState('');
@@ -27,12 +23,10 @@ export default function Editar() {
   useEffect(() => {
     const carregarDados = async () => {
       if (!params.id) return;
-
       try {
         const armazenados = await AsyncStorage.getItem('cadastrosveiculos');
         const lista = armazenados ? JSON.parse(armazenados) : [];
-
-        const item = lista.find((v: any) => v.id === params.id);
+        const item = lista.find((v: any) => String(v.id) === String(params.id));
         if (item) {
           setStatus(item.status);
           setAdmissao(item.admissao);
@@ -42,36 +36,20 @@ export default function Editar() {
           setVeiculo(item.veiculo);
           setChassi(item.chassi);
         }
-      } catch (error) {
+      } catch {
         Alert.alert('Erro', 'Não foi possível carregar os dados do veículo.');
       }
     };
-
     carregarDados();
   }, [params.id]);
 
   const salvarEdicao = async () => {
-    if (!params.id) {
-      Alert.alert('Erro', 'ID do veículo não encontrado.');
-      return;
-    }
-
-    const novosDados = {
-      id: params.id,
-      status,
-      admissao,
-      modelo,
-      marca,
-      placa,
-      veiculo,
-      chassi,
-    };
-
+    if (!params.id) return Alert.alert('Erro', 'ID do veículo não encontrado.');
+    const novosDados = { id: params.id, status, admissao, modelo, marca, placa, veiculo, chassi };
     try {
       const armazenados = await AsyncStorage.getItem('cadastrosveiculos');
-      let lista = armazenados ? JSON.parse(armazenados) : [];
-
-      const index = lista.findIndex((item: any) => item.id === params.id);
+      const lista = armazenados ? JSON.parse(armazenados) : [];
+      const index = lista.findIndex((item: any) => String(item.id) === String(params.id));
       if (index !== -1) {
         lista[index] = novosDados;
         await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(lista));
@@ -80,64 +58,23 @@ export default function Editar() {
       } else {
         Alert.alert('Erro', 'Veículo não encontrado.');
       }
-    } catch (error) {
+    } catch {
       Alert.alert('Erro', 'Não foi possível salvar as alterações.');
     }
   };
 
   return (
-      <LinearGradient
-              colors={['#ff5f96', '#ffe66d']}
-              start={{ x: 0, y: 1 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.gradient}
-      >
+    <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={styles.titulo}>Editar Veículo</Text>
+        <Text style={[styles.titulo, { color: isDark ? '#fff' : '#333' }]}>Editar Veículo</Text>
 
-        <TextInput
-          style={styles.input}
-          placeholder="Status (tipo de problema)"
-          value={status}
-          onChangeText={setStatus}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Data de admissão"
-          keyboardType="numeric"
-          value={admissao}
-          onChangeText={setAdmissao}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Modelo"
-          value={modelo}
-          onChangeText={setModelo}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Marca"
-          value={marca}
-          onChangeText={setMarca}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Placa"
-          value={placa}
-          onChangeText={setPlaca}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Veículo"
-          value={veiculo}
-          onChangeText={setVeiculo}
-        />
-        <TextInput
-          style={styles.input}
-          placeholder="Chassi"
-          value={chassi}
-          onChangeText={setChassi}
-        />
+        <TextInput style={styles.input} placeholder="Status (tipo de problema)" value={status} onChangeText={setStatus} />
+        <TextInput style={styles.input} placeholder="Data de admissão" keyboardType="numeric" value={admissao} onChangeText={setAdmissao} />
+        <TextInput style={styles.input} placeholder="Modelo" value={modelo} onChangeText={setModelo} />
+        <TextInput style={styles.input} placeholder="Marca" value={marca} onChangeText={setMarca} />
+        <TextInput style={styles.input} placeholder="Placa" value={placa} onChangeText={setPlaca} />
+        <TextInput style={styles.input} placeholder="Veículo" value={veiculo} onChangeText={setVeiculo} />
+        <TextInput style={styles.input} placeholder="Chassi" value={chassi} onChangeText={setChassi} />
 
         <TouchableOpacity style={styles.botao} onPress={salvarEdicao}>
           <Text style={styles.textoBotao}>Salvar Alterações</Text>
@@ -148,19 +85,15 @@ export default function Editar() {
 }
 
 const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-  },
-  container: {
-    padding: 20,
-    marginTop: 40,
-  },
+  gradient: { flex: 1 },
+  container: { padding: 20, marginTop: 40 },
   titulo: {
     fontSize: 23,
-    fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
+    fontWeight: 'bold',
     color: '#333',
+    fontFamily: 'Inter_700Bold',
   },
   input: {
     backgroundColor: '#fff',
@@ -168,7 +101,8 @@ const styles = StyleSheet.create({
     marginBottom: 15,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: '#ccc',
+    borderColor: 'black',
+    fontFamily: 'Inter_400Regular',
   },
   botao: {
     backgroundColor: '#28a745',
@@ -178,7 +112,7 @@ const styles = StyleSheet.create({
   },
   textoBotao: {
     color: '#fff',
-    fontWeight: 'bold',
     fontSize: 16,
+    fontFamily: 'Inter_600SemiBold',
   },
 });

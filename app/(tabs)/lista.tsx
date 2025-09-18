@@ -1,86 +1,54 @@
 import React, { useEffect, useState } from 'react';
-import {
-  View,
-  Text,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  Alert,
-  ScrollView,
-} from 'react-native';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useIsFocused } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../../context/themeContext';
+import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
 
 export default function Lista() {
-  const [cadastros, setCadastros] = useState([]);
+  const [cadastros, setCadastros] = useState<any[]>([]);
   const isFocused = useIsFocused();
   const router = useRouter();
+  const { isDark } = useTheme();
+  const colors = isDark ? DARK_BG : LIGHT_BG;
 
-  useEffect(() => {
-    if (isFocused) {
-      carregarCadastros();
-    }
-  }, [isFocused]);
+  useEffect(() => { if (isFocused) carregarCadastros(); }, [isFocused]);
 
   const carregarCadastros = async () => {
     try {
       const dados = await AsyncStorage.getItem('cadastrosveiculos');
-      if (dados) {
-        setCadastros(JSON.parse(dados));
-      }
+      if (dados) setCadastros(JSON.parse(dados));
     } catch (error) {
       console.log('Erro ao carregar cadastros', error);
     }
   };
 
-  const excluir = async (id) => {
-    Alert.alert('Confirmação', 'Deseja realmente excluir este veículo?', [
-      {
-        text: 'Cancelar',
-        style: 'cancel',
-      },
-      {
-        text: 'Excluir',
-        style: 'destructive',
-        onPress: async () => {
-          const novaLista = cadastros.filter((item) => item.id !== id);
-          await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(novaLista));
-          setCadastros(novaLista);
-        },
-      },
-    ]);
+  const excluir = async (id: number) => {
+    const novaLista = cadastros.filter((item) => item.id !== id);
+    await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(novaLista));
+    setCadastros(novaLista);
   };
 
-  const editar = (item) => {
-    router.push({
-      pathname: '/editar',
-      params: { ...item },
-    });
+  const editar = (item: any) => {
+    router.push({ pathname: '/editar', params: { ...item } });
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: any }) => (
     <View style={styles.item}>
       <Text style={styles.titulo}>{item.modelo} ({item.marca})</Text>
-      <Text>Status: {item.status}</Text>
-      <Text>Admissão: {item.admissao}</Text>
-      <Text>Placa: {item.placa}</Text>
-      <Text>Veículo: {item.veiculo}</Text>
-      <Text>Chassi: {item.chassi}</Text>
+      <Text style={styles.body}>Status: {item.status}</Text>
+      <Text style={styles.body}>Admissão: {item.admissao}</Text>
+      <Text style={styles.body}>Placa: {item.placa}</Text>
+      <Text style={styles.body}>Veículo: {item.veiculo}</Text>
+      <Text style={styles.body}>Chassi: {item.chassi}</Text>
 
       <View style={styles.botoes}>
-        <TouchableOpacity
-          style={styles.botaoEditar}
-          onPress={() => editar(item)}
-        >
+        <TouchableOpacity style={styles.botaoEditar} onPress={() => editar(item)}>
           <Text style={styles.textoBotao}>Editar</Text>
         </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.botaoExcluir}
-          onPress={() => excluir(item.id)}
-        >
+        <TouchableOpacity style={styles.botaoExcluir} onPress={() => excluir(item.id)}>
           <Text style={styles.textoBotao}>Excluir</Text>
         </TouchableOpacity>
       </View>
@@ -88,21 +56,15 @@ export default function Lista() {
   );
 
   return (
-    <LinearGradient
-      colors={['#ff5f96', '#ffe66d']}
-      start={{ x: 0, y: 1 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.gradient}
-    >
+    <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
       <View style={styles.wrapper}>
-        <Text style={styles.tituloPagina}>Veículos Cadastrados</Text>
-
+        <Text style={[styles.tituloPagina, { color: isDark ? '#fff' : '#333' }]}>Veículos Cadastrados</Text>
         <FlatList
           data={cadastros}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item: any) => String(item.id)}
           renderItem={renderItem}
           contentContainerStyle={styles.lista}
-          ListEmptyComponent={<Text style={styles.vazio}>Nenhum veículo cadastrado.</Text>}
+          ListEmptyComponent={<Text style={[styles.vazio, styles.body]}>Nenhum veículo cadastrado.</Text>}
         />
       </View>
     </LinearGradient>
@@ -110,62 +72,21 @@ export default function Lista() {
 }
 
 const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-  },
-  wrapper: {
-    flex: 1,
-    paddingTop: 60,
-    paddingHorizontal: 20,
-  },
+  wrapper: { flex: 1, paddingTop: 60, paddingHorizontal: 20 },
   tituloPagina: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
+    fontSize: 23,
     textAlign: 'center',
     marginBottom: 20,
-  },
-  lista: {
-    paddingBottom: 80,
-  },
-  item: {
-    backgroundColor: '#ffffffcc',
-    padding: 15,
-    marginBottom: 15,
-    borderRadius: 10,
-  },
-  titulo: {
-    fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 5,
+    fontFamily: 'Inter_700Bold',
   },
-  botoes: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginTop: 10,
-  },
-  botaoEditar: {
-    backgroundColor: '#007bff',
-    padding: 10,
-    borderRadius: 8,
-    flex: 1,
-    marginRight: 10,
-  },
-  botaoExcluir: {
-    backgroundColor: '#dc3545',
-    padding: 10,
-    borderRadius: 8,
-    flex: 1,
-  },
-  textoBotao: {
-    color: '#fff',
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  vazio: {
-    textAlign: 'center',
-    marginTop: 40,
-    fontSize: 16,
-    color: '#666',
-  },
+  lista: { paddingBottom: 80 },
+  item: { backgroundColor: '#ffffffcc', padding: 15, marginBottom: 15, borderRadius: 10 },
+  titulo: { fontSize: 18, marginBottom: 5, fontFamily: 'Inter_700Bold' },
+  body: { fontFamily: 'Inter_400Regular' },
+  botoes: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+  botaoEditar: { backgroundColor: '#007bff', padding: 10, borderRadius: 8, flex: 1, marginRight: 10 },
+  botaoExcluir: { backgroundColor: '#dc3545', padding: 10, borderRadius: 8, flex: 1 },
+  textoBotao: { color: '#fff', textAlign: 'center', fontFamily: 'Inter_600SemiBold' },
+  vazio: { textAlign: 'center', marginTop: 40, fontSize: 16, color: '#666' },
 });

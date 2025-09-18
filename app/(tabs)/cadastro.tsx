@@ -1,25 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
-  View,Text,TextInput,Button,StyleSheet,Alert,ScrollView,TouchableOpacity,KeyboardAvoidingView,Platform} from 'react-native';
+  View, Text, TextInput, StyleSheet, Alert, ScrollView,
+  TouchableOpacity, KeyboardAvoidingView, Platform
+} from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { LinearGradient } from 'expo-linear-gradient';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams } from 'expo-router';
+import { useTheme } from "../../context/themeContext";
+import { LIGHT_BG, DARK_BG } from "../../theme/gradients";
 
-const veiculos = [
-  'Carro', 'Motocicleta'
-];
+type CadastroVeiculo = {
+  id: number;
+  status: string;
+  admissao: string;
+  modelo: string;
+  marca: string;
+  placa: string;
+  veiculo: string;
+  chassi: string;
+};
 
-function formatarData(text) {
+const veiculos = ['Carro', 'Motocicleta'];
+
+function formatarData(text: string) {
   let digits = text.replace(/\D/g, '');
   if (digits.length > 8) digits = digits.substring(0, 8);
-
   if (digits.length <= 2) return digits;
   if (digits.length <= 4) return digits.substring(0, 2) + '/' + digits.substring(2);
   return digits.substring(0, 2) + '/' + digits.substring(2, 4) + '/' + digits.substring(4);
 }
-
-
 
 export default function Cadastro() {
   const [status, setStatus] = useState('');
@@ -30,56 +40,56 @@ export default function Cadastro() {
   const [veiculo, setVeiculo] = useState('');
   const [chassi, setChassi] = useState('');
   const [showManualInput, setShowManualInput] = useState(false);
-  const params = useLocalSearchParams();
 
+  const params = useLocalSearchParams();
+  const { isDark } = useTheme();
+  const colors = isDark ? DARK_BG : LIGHT_BG;
 
   const [editando, setEditando] = useState(false);
-  const [produtoEditandoId, setProdutoEditandoId] = useState(null);
+  const [produtoEditandoId, setProdutoEditandoId] = useState<number | null>(null);
 
-
-
-  
   const salvarVeiculo = async () => {
-  if (!status || !admissao || !modelo || !marca || !placa || !veiculo || !chassi) {
-    Alert.alert('Erro', 'Preencha todos os campos.');
-    return;
-  }
-
-  try {
-    const cadastrosveiculosSalvos = await AsyncStorage.getItem('cadastrosveiculos');
-    let cadastrosveiculos = cadastrosveiculosSalvos ? JSON.parse(cadastrosveiculosSalvos) : [];
-
-    if (editando && produtoEditandoId !== null) {
-      cadastrosveiculos = cadastrosveiculos.map((item) =>
-        item.id === produtoEditandoId
-          ? { ...item, status, admissao, modelo, marca, placa, veiculo, chassi }
-          : item
-      );
-    } else {
-      const novoVeiculo = {
-        id: Date.now(),
-        status,
-        admissao,
-        modelo,
-        marca,
-        placa,
-        veiculo,
-        chassi,
-      };
-      cadastrosveiculos.push(novoVeiculo);
+    if (!status || !admissao || !modelo || !marca || !placa || !veiculo || !chassi) {
+      Alert.alert('Erro', 'Preencha todos os campos.');
+      return;
     }
 
-    await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(cadastrosveiculos));
-    Alert.alert('Sucesso', editando ? 'Veículo atualizado com sucesso!' : 'Veículo cadastrado com sucesso!');
-    limparCampos();
-    setEditando(false);
-    setProdutoEditandoId(null);
-  } catch (error) {
-    Alert.alert('Erro', 'Não foi possível salvar o veículo.');
-    console.error(error);
-  }
-};
+    try {
+      const cadastrosveiculosSalvos = await AsyncStorage.getItem('cadastrosveiculos');
+      let cadastrosveiculos: CadastroVeiculo[] = cadastrosveiculosSalvos
+        ? (JSON.parse(cadastrosveiculosSalvos) as CadastroVeiculo[])
+        : [];
 
+      if (editando && produtoEditandoId !== null) {
+        cadastrosveiculos = cadastrosveiculos.map((item: CadastroVeiculo) =>
+          item.id === produtoEditandoId
+            ? { ...item, status, admissao, modelo, marca, placa, veiculo, chassi }
+            : item
+        );
+      } else {
+        const novoVeiculo: CadastroVeiculo = {
+          id: Date.now(),
+          status,
+          admissao,
+          modelo,
+          marca,
+          placa,
+          veiculo,
+          chassi,
+        };
+        cadastrosveiculos.push(novoVeiculo);
+      }
+
+      await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(cadastrosveiculos));
+      Alert.alert('Sucesso', editando ? 'Veículo atualizado com sucesso!' : 'Veículo cadastrado com sucesso!');
+      limparCampos();
+      setEditando(false);
+      setProdutoEditandoId(null);
+    } catch (error) {
+      Alert.alert('Erro', 'Não foi possível salvar o veículo.');
+      console.error(error);
+    }
+  };
 
   const limparCampos = () => {
     setStatus('');
@@ -92,20 +102,11 @@ export default function Cadastro() {
     setShowManualInput(false);
   };
 
-
   return (
-    <LinearGradient
-          colors={['#ff5f96', '#ffe66d']}
-          start={{ x: 0, y: 1 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.gradient}
-        >
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={{ flex: 1 }}
-      >
-        <ScrollView style={styles.container}>
-          <Text style={styles.title}>Cadastro de Veículos</Text>
+    <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
+        <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
+          <Text style={[styles.title, { color: isDark ? '#fff' : '#333' }]}>Cadastro de Veículos</Text>
 
           <TextInput
             style={styles.input}
@@ -120,36 +121,17 @@ export default function Cadastro() {
             value={admissao}
             onChangeText={text => setAdmissao(formatarData(text))}
           />
-          <TextInput
-            style={styles.input}
-            placeholder="Modelo"
-            value={modelo}
-            onChangeText={setModelo}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Marca"
-            value={marca}
-            onChangeText={setMarca}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Placa (letras e números)"
-            value={placa}
-            onChangeText={setPlaca}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Chassi"
-            value={chassi}
-            onChangeText={setChassi}
-          />
+          <TextInput style={styles.input} placeholder="Modelo" value={modelo} onChangeText={setModelo} />
+          <TextInput style={styles.input} placeholder="Marca" value={marca} onChangeText={setMarca} />
+          <TextInput style={styles.input} placeholder="Placa (letras e números)" value={placa} onChangeText={setPlaca} />
+          <TextInput style={styles.input} placeholder="Chassi" value={chassi} onChangeText={setChassi} />
 
           <Text style={styles.label}>Tipo de veículo</Text>
           <Picker
             selectedValue={veiculo}
             onValueChange={(itemValue) => setVeiculo(itemValue)}
             style={styles.picker}
+            itemStyle={Platform.OS === 'ios' ? { fontFamily: 'Inter_400Regular' } : undefined}
           >
             <Picker.Item label="Selecione o tipo de veículo" value="" />
             {veiculos.map((tipo) => (
@@ -157,12 +139,10 @@ export default function Cadastro() {
             ))}
           </Picker>
 
-         
-          <Button 
-            title={editando ? "ATUALIZAR VEÍCULO" : "SALVAR VEÍCULO"} 
-            onPress={salvarVeiculo} 
-            color="#28a745" 
-          />
+          {/* Botão customizado para controlar a fonte */}
+          <TouchableOpacity style={styles.btnSalvar} onPress={salvarVeiculo} activeOpacity={0.85}>
+            <Text style={styles.textoBotao}>{editando ? 'Atualizar veículo' : 'Salvar Veículo'}</Text>
+          </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
     </LinearGradient>
@@ -170,85 +150,38 @@ export default function Cadastro() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    padding: 10,
-    marginTop: 40,
-    flex: 1,
-  },
-   gradient: {
-    flex: 1,
-  },
+  container: { padding: 10, marginTop: 40, flex: 1 },
+  gradient: { flex: 1 },
   title: {
-    fontSize: 22,
-    color: '#333',
-    fontWeight: 'bold',
+    fontSize: 23,
+    textAlign: 'center',
     marginTop: 10,
-    marginBottom: 10,
-    textAlign: 'center'
+    marginBottom: 20,
+    fontFamily: 'Inter_700Bold',
   },
   input: {
+    backgroundColor: '#fff',
+    padding: 12,
+    marginBottom: 15,
+    borderRadius: 8,
     borderWidth: 1,
-    backgroundColor: 'white',
     borderColor: 'black',
-    color: '',
-    padding: 10,
-    marginBottom: 12,
-    borderRadius: 6
+    fontFamily: 'Inter_400Regular',
   },
-  label: {
-    fontWeight: 'bold',
-    marginBottom: 6,
-    marginTop: 10
-  },
+  label: { marginBottom: 6, marginTop: 10, fontFamily: 'Inter_600SemiBold' },
   picker: {
     borderWidth: 1,
     borderColor: 'black',
     backgroundColor: 'white',
-    marginBottom: 12
+    marginBottom: 12,
+    fontFamily: 'Inter_400Regular', // iOS aceita via itemStyle; Android pode ignorar
   },
-  codigo: {
-    padding: 10,
-    backgroundColor: '#eee',
-    textAlign: 'center',
-    marginBottom: 12
+  btnSalvar: {
+    backgroundColor: '#28a745',
+    padding: 14,
+    borderRadius: 8,
+    alignItems: 'center',
+    marginTop: 8,
   },
-  botoesLinha: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    gap: 8,
-    marginBottom: 12
-  },
-  botaoScanner: {
-    flex: 1,
-    backgroundColor: '#2951ff',
-    padding: 12,
-    borderRadius: 6,
-    alignItems: 'center'
-  },
-  botaoManual: {
-    flex: 1,
-    backgroundColor: '#2951ff',
-    padding: 12,
-    borderRadius: 6,
-    alignItems: 'center'
-  },
-  textoBotao: {
-    color: '#fff',
-    fontWeight: 'bold'
-  },
-  scannerContainer: {
-    height: 400,
-    marginBottom: 20,
-    position: 'relative',
-    overflow: 'hidden',
-    borderRadius: 10
-  },
-  cancelarBotao: {
-    backgroundColor: 'red',
-    padding: 10,
-    position: 'absolute',
-    bottom: 10,
-    alignSelf: 'center',
-    borderRadius: 6
-  }
+  textoBotao: { color: '#fff', fontFamily: 'Inter_600SemiBold', fontSize: 16 },
 });

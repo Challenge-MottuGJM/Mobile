@@ -1,10 +1,11 @@
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect } from 'react';
 import { View } from 'react-native';
 import { ThemeProvider as NavThemeProvider, DarkTheme, DefaultTheme } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { ThemeProvider, useTheme } from '../context/themeContext';
+import { useFonts, Inter_400Regular, Inter_600SemiBold, Inter_700Bold } from '@expo-google-fonts/inter';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
@@ -13,7 +14,7 @@ function ThemedStack() {
   return (
     <NavThemeProvider value={isDark ? DarkTheme : DefaultTheme}>
       <StatusBar style="auto" />
-      <Stack>
+      <Stack screenOptions={{ headerTitleStyle: { fontFamily: 'Inter_600SemiBold' } }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>
     </NavThemeProvider>
@@ -21,27 +22,22 @@ function ThemedStack() {
 }
 
 export default function Layout() {
-  const [appIsReady, setAppIsReady] = useState(false);
+  const [loaded, error] = useFonts({
+    Inter_400Regular,
+    Inter_600SemiBold,
+    Inter_700Bold,
+  });
 
   useEffect(() => {
-    (async () => {
-      await new Promise(res => setTimeout(res, 2000));
-      setAppIsReady(true);
-    })();
-  }, []);
+    if (loaded || error) SplashScreen.hideAsync();
+  }, [loaded, error]);
 
-  const onLayoutRootView = useCallback(async () => {
-    if (appIsReady) await SplashScreen.hideAsync();
-  }, [appIsReady]);
-
-  if (!appIsReady) return null;
+  if (!loaded && !error) return null;
 
   return (
-    <View style={{ flex: 1 }} onLayout={onLayoutRootView}>
+    <View style={{ flex: 1 }}>
       <ThemeProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
+        <ThemedStack />
       </ThemeProvider>
     </View>
   );

@@ -3,23 +3,18 @@ import React from "react";
 import { ScrollView, StyleSheet, Text } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import Integrante from "../Components/Integrante";
-import { BlurView } from 'expo-blur';
+import { useTheme } from "../../context/themeContext";
+import { LIGHT_BG, DARK_BG } from "../../theme/gradients";
 
-export default function DevsPage() {
+export default function MinhaTela() {
+  const { isDark } = useTheme();
+  const colors = isDark ? DARK_BG : LIGHT_BG;
+
   return (
-    <LinearGradient
-      colors={['#ff5f96', '#ffe66d']}
-      start={{ x: 0, y: 1 }}
-      end={{ x: 1, y: 1 }}
-      style={styles.gradient}
-    >
+    <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Stack.Screen
-          options={{
-            title: "Devs",
-          }}
-        />
-        <Text style={styles.title}>Desenvolvedores</Text>
+        <Stack.Screen options={{ title: "Devs" }} />
+        <Text style={[styles.title, { color: isDark ? '#fff' : '#333' }]}>Desenvolvedores</Text>
 
         <Integrante
           nome="Gustavo de Aguiar"
@@ -39,8 +34,6 @@ export default function DevsPage() {
           linkedinUrl="https://www.linkedin.com/in/julio-cesar-rodrigues29/"
         />
 
-        
-
         <Integrante
           nome="Matheus de Freitas Silva"
           rm="552602"
@@ -55,22 +48,18 @@ export default function DevsPage() {
 }
 
 const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-  },
-  container: {
-    padding: 16,
-    paddingBottom: 40,
-  },
+  gradient: { flex: 1 },
+  container: { padding: 16, paddingBottom: 40 },
   title: {
     fontSize: 23,
-    color: "#333",
-    fontWeight: "bold",
     alignSelf: "center",
     marginBottom: 24,
     marginTop: 40,
+    fontWeight: 'bold',
+    fontFamily: 'Inter_700Bold',
   },
   githubUrl: {
     color: "#5e17eb",
+    fontFamily: 'Inter_600SemiBold',
   },
 });
