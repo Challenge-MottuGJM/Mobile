@@ -15,10 +15,31 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [busy, setBusy] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string; general?: string }>({});
+
+  function validate() {
+    const next: typeof errors = {};
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!email.trim()) next.email = 'Informe o e-mail.';
+    else if (!emailRegex.test(email.trim())) next.email = 'E-mail inválido.';
+    if (!password) next.password = 'Informe a senha.';
+    else if (password.length < 6) next.password = 'Senha deve ter ao menos 6 caracteres.';
+    setErrors(next);
+    return Object.keys(next).length === 0;
+  }
 
   const handleLogin = async () => {
+    if (!validate()) return;
     setBusy(true);
-    try { await signIn(email.trim(), password); } finally { setBusy(false); }
+    setErrors({});
+    try {
+      await signIn(email.trim(), password);
+    } catch (e: any) {
+      // Quando integrar, trocar pela mensagem da api
+      setErrors({ general: 'Não foi possível entrar. Verifique os dados e tente novamente.' });
+    } finally {
+      setBusy(false);
+    }
   };
 
   if (state.loading) {
@@ -44,19 +65,31 @@ export default function Login() {
         ) : (
           <>
             <TextInput
-              style={styles.input} placeholder="E-mail"
-              value={email} onChangeText={setEmail} autoCapitalize="none" keyboardType="email-address"
+              style={styles.input}
+              placeholder="E-mail"
+              value={email}
+              onChangeText={(v) => { setEmail(v); if (errors.email) setErrors({ ...errors, email: undefined }); }}
+              autoCapitalize="none"
+              keyboardType="email-address"
             />
+            {errors.email ? <Text style={styles.error}>{errors.email}</Text> : null}
+
             <TextInput
-              style={styles.input} placeholder="Senha"
-              value={password} onChangeText={setPassword} secureTextEntry
+              style={styles.input}
+              placeholder="Senha"
+              value={password}
+              onChangeText={(v) => { setPassword(v); if (errors.password) setErrors({ ...errors, password: undefined }); }}
+              secureTextEntry
             />
+            {errors.password ? <Text style={styles.error}>{errors.password}</Text> : null}
+
+            {errors.general ? <Text style={[styles.error, { textAlign: 'center' }]}>{errors.general}</Text> : null}
 
             <TouchableOpacity style={styles.primaryBtn} onPress={handleLogin} disabled={busy}>
               <Text style={styles.btnText}>{busy ? 'Entrando...' : 'Entrar'}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => router.push('/signup')}>
+            <TouchableOpacity onPress={() => router.push('/(tabs)/signup')}>
               <Text style={[styles.link, { color: '#5e17eb' }]}>Criar conta</Text>
             </TouchableOpacity>
           </>
@@ -71,8 +104,9 @@ const styles = StyleSheet.create({
   title: { fontSize: 24, textAlign: 'center', marginBottom: 24, fontFamily: 'Inter_700Bold' },
   input: {
     backgroundColor: '#fff', borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-    padding: 12, marginBottom: 12, fontFamily: 'Inter_400Regular',
+    padding: 12, marginBottom: 8, fontFamily: 'Inter_400Regular',
   },
+  error: { color: '#C62828', marginBottom: 8, fontFamily: 'Inter_600SemiBold' },
   primaryBtn: { backgroundColor: '#5e17eb', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 8 },
   btnText: { color: '#fff', fontFamily: 'Inter_600SemiBold' },
   link: { textAlign: 'center', marginTop: 12, fontFamily: 'Inter_600SemiBold' },
