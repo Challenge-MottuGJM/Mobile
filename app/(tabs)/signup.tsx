@@ -4,6 +4,8 @@ import { AuthContext } from '../../context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/themeContext';
 import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
+import { useRouter } from 'expo-router';
+
 
 export default function Signup() {
   const { isDark } = useTheme();
@@ -29,18 +31,22 @@ export default function Signup() {
     return Object.keys(next).length === 0;
   }
 
-  const handleSignup = async () => {
-    if (!validate()) return;
-    setBusy(true);
-    setErrors({});
-    try {
-      await signUp(name.trim(), email.trim(), password);
-    } catch (e: any) {
-      setErrors({ general: 'Não foi possível cadastrar. Verifique os dados e tente novamente.' }); // ao integrar api, substituir pela mensagem do servidor
-    } finally {
-      setBusy(false);
-    }
-  };
+  const router = useRouter();
+
+const handleSignup = async () => {
+  if (!validate()) return;
+  setBusy(true);
+  setErrors({});
+  try {
+    await signUp(name.trim(), email.trim(), password);
+    router.replace('/(tabs)');
+  } catch (e: any) {
+    setErrors({ general: 'Não foi possível cadastrar. Verifique os dados e tente novamente.' });
+  } finally {
+    setBusy(false);
+  }
+};
+
 
   return (
     <LinearGradient colors={colors} start={{ x:0, y:0 }} end={{ x:1, y:1 }} style={{ flex: 1 }}>

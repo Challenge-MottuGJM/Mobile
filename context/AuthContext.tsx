@@ -4,8 +4,8 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, on
 import { doc, getFirestore, setDoc, getDoc } from 'firebase/firestore';
 import { app } from '../services/firebaseConfig';
 
-type UserType = { id: string; name: string | null; email: string | null } | null;
-type AuthState = { user: UserType; accessToken: string | null; loading: boolean };
+type UserType = { id: string; name: string | null; email: string | null };
+type AuthState = { user: UserType | null; accessToken: string | null; loading: boolean };
 
 type AuthContextType = {
   state: AuthState;
@@ -29,15 +29,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
       if (firebaseUser) {
         const accessToken = await firebaseUser.getIdToken();
-        let userData = { id: firebaseUser.uid, name: firebaseUser.displayName, email: firebaseUser.email };
+        let userData: UserType = {
+          id: firebaseUser.uid,
+          name: firebaseUser.displayName,
+          email: firebaseUser.email
+        };
+
         try {
           const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
           if (userDoc.exists()) {
-            userData = userDoc.data() as UserType;
+            const data = userDoc.data();
+            userData = {
+              id: data.id,
+              name: data.name ?? null,
+              email: data.email ?? null
+            };
           }
         } catch (error) {
           console.log('Erro ao buscar dados do Firestore:', error);
         }
+
         setState({ user: userData, accessToken, loading: false });
         await SecureStore.setItemAsync(TOKEN_KEY, accessToken);
         await SecureStore.setItemAsync(USER_KEY, JSON.stringify(userData));
@@ -55,11 +66,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;
       const accessToken = await firebaseUser.getIdToken();
-      let userData = { id: firebaseUser.uid, name: firebaseUser.displayName, email: firebaseUser.email };
+
+      let userData: UserType = {
+        id: firebaseUser.uid,
+        name: firebaseUser.displayName,
+        email: firebaseUser.email
+      };
 
       const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
       if (userDoc.exists()) {
-        userData = userDoc.data() as UserType;
+        const data = userDoc.data();
+        userData = {
+          id: data.id,
+          name: data.name ?? null,
+          email: data.email ?? null
+        };
       }
 
       setState({ user: userData, accessToken, loading: false });
@@ -76,6 +97,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const firebaseUser = userCredential.user;
 
       await updateProfile(firebaseUser, { displayName: name });
+
       await setDoc(doc(db, 'users', firebaseUser.uid), { id: firebaseUser.uid, name, email });
 
       await signIn(email, password);
