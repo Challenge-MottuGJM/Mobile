@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from "../../context/themeContext";
 import { LIGHT_BG, DARK_BG } from "../../theme/gradients";
+import axios from 'axios';
+
+const API_BASE_URL = "http://localhost:5148";
+
 
 export default function Editar() {
   const router = useRouter();
@@ -22,46 +25,40 @@ export default function Editar() {
 
   useEffect(() => {
     const carregarDados = async () => {
-      if (!params.id) return;
-      try {
-        const armazenados = await AsyncStorage.getItem('cadastrosveiculos');
-        const lista = armazenados ? JSON.parse(armazenados) : [];
-        const item = lista.find((v: any) => String(v.id) === String(params.id));
-        if (item) {
-          setStatus(item.status);
-          setAdmissao(item.admissao);
-          setModelo(item.modelo);
-          setMarca(item.marca);
-          setPlaca(item.placa);
-          setVeiculo(item.veiculo);
-          setChassi(item.chassi);
-        }
-      } catch {
-        Alert.alert('Erro', 'Não foi possível carregar os dados do veículo.');
-      }
-    };
+  if (!params.id) return;
+  try {
+    const response = await axios.get(`${API_BASE_URL}/motos/${params.id}`);
+    const item = response.data;
+    setStatus(item.status);
+    setAdmissao(item.admissao);
+    setModelo(item.modelo);
+    setMarca(item.marca);
+    setPlaca(item.placa);
+    setVeiculo(item.veiculo);
+    setChassi(item.chassi);
+  } catch (error) {
+    Alert.alert('Erro', 'Não foi possível carregar os dados do veículo.');
+    console.log(error);
+  }
+};
+
     carregarDados();
   }, [params.id]);
 
   const salvarEdicao = async () => {
-    if (!params.id) return Alert.alert('Erro', 'ID do veículo não encontrado.');
-    const novosDados = { id: params.id, status, admissao, modelo, marca, placa, veiculo, chassi };
-    try {
-      const armazenados = await AsyncStorage.getItem('cadastrosveiculos');
-      const lista = armazenados ? JSON.parse(armazenados) : [];
-      const index = lista.findIndex((item: any) => String(item.id) === String(params.id));
-      if (index !== -1) {
-        lista[index] = novosDados;
-        await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(lista));
-        Alert.alert('Sucesso', 'Veículo atualizado com sucesso!');
-        router.replace('/lista');
-      } else {
-        Alert.alert('Erro', 'Veículo não encontrado.');
-      }
-    } catch {
-      Alert.alert('Erro', 'Não foi possível salvar as alterações.');
-    }
-  };
+  if (!params.id) return Alert.alert('Erro', 'ID do veículo não encontrado.');
+  const novosDados = { status, admissao, modelo, marca, placa, veiculo, chassi };
+  try {
+    await axios.put(`${API_BASE_URL}/motos/atualizar/${params.id}`, novosDados);
+    Alert.alert('Sucesso', 'Veículo atualizado com sucesso!');
+    router.replace('/lista');
+  } catch (error) {
+    Alert.alert('Erro', 'Não foi possível salvar as alterações.');
+    console.log(error);
+  }
+};
+
+
 
   return (
     <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>

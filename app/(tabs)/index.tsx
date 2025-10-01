@@ -1,6 +1,5 @@
 import { Stack, router } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import React from "react";
 import { Image, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-native";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/themeContext';
@@ -34,19 +33,19 @@ export default function Tela() {
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/cadastro")}>
-          <Text style={styles.buttonText}>Cadastro</Text>
+          <Text style={styles.buttonText}>Cadastrar veículos</Text>
         </TouchableOpacity>
       </ScrollView>
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/lista")}>
-          <Text style={styles.buttonText}>Lista</Text>
+          <Text style={styles.buttonText}>Lista de veículos</Text>
         </TouchableOpacity>
       </ScrollView>
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/editar")}>
-          <Text style={styles.buttonText}>Editar</Text>
+          <Text style={styles.buttonText}>Editar veículos</Text>
         </TouchableOpacity>
       </ScrollView>
 

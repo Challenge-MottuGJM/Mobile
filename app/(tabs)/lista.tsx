@@ -1,11 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRouter } from 'expo-router';
 import { useIsFocused } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/themeContext';
 import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
+import axios from 'axios';
+
+
+const API_BASE_URL = "http://localhost:5148";
 
 export default function Lista() {
   const [cadastros, setCadastros] = useState<any[]>([]);
@@ -17,19 +20,23 @@ export default function Lista() {
   useEffect(() => { if (isFocused) carregarCadastros(); }, [isFocused]);
 
   const carregarCadastros = async () => {
-    try {
-      const dados = await AsyncStorage.getItem('cadastrosveiculos');
-      if (dados) setCadastros(JSON.parse(dados));
-    } catch (error) {
-      console.log('Erro ao carregar cadastros', error);
-    }
-  };
+  try {
+    const response = await axios.get(`${API_BASE_URL}/motos`);
+    setCadastros(response.data);
+  } catch (error) {
+    console.log('Erro ao carregar cadastros', error);
+  }
+};
 
   const excluir = async (id: number) => {
-    const novaLista = cadastros.filter((item) => item.id !== id);
-    await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(novaLista));
-    setCadastros(novaLista);
-  };
+  try {
+    await axios.delete(`${API_BASE_URL}/motos/deletar/${id}`);
+    setCadastros(cadastros.filter((item) => item.id !== id));
+  } catch (error) {
+    console.log('Erro ao excluir', error);
+  }
+};
+
 
   const editar = (item: any) => {
     router.push({ pathname: '/editar', params: { ...item } });

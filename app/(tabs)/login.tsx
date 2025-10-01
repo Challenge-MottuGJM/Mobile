@@ -5,6 +5,7 @@ import { AuthContext } from '../../context/AuthContext';
 import { useTheme } from '../../context/themeContext';
 import { LinearGradient } from 'expo-linear-gradient';
 import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
+import  {addDoc, collection, db} from '../../services/firebaseConfig';
 
 export default function Login() {
   const { isDark } = useTheme();

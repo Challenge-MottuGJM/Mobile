@@ -1,8 +1,11 @@
 import React, { createContext, useCallback, useEffect, useMemo, useState } from 'react';
 import * as SecureStore from 'expo-secure-store';
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut as firebaseSignOut, updateProfile, User } from 'firebase/auth';
+import { doc, getFirestore, setDoc, getDoc } from 'firebase/firestore';
+import { app } from '../services/firebaseConfig';
 
-type User = { id: string; name: string; email: string } | null;
-type AuthState = { user: User; accessToken: string | null; loading: boolean; };
+type UserType = { id: string; name: string | null; email: string | null } | null;
+type AuthState = { user: UserType; accessToken: string | null; loading: boolean };
 
 type AuthContextType = {
   state: AuthState;
@@ -16,46 +19,73 @@ export const AuthContext = createContext<AuthContextType>({} as any);
 const TOKEN_KEY = 'auth/token';
 const USER_KEY = 'auth/user';
 
+const auth = getAuth(app);
+const db = getFirestore(app);
+
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({ user: null, accessToken: null, loading: true });
 
   useEffect(() => {
-    let alive = true;
-  (async () => {
-    try {
-      const token = await SecureStore.getItemAsync(TOKEN_KEY);
-      const userJson = await SecureStore.getItemAsync(USER_KEY);
-      if (!alive) return;
-      setState({
-        user: userJson ? JSON.parse(userJson) : null,
-        accessToken: token,
-        loading: false,
-      });
-    } catch {
-      if (alive) setState({ user: null, accessToken: null, loading: false });
-    }
-  })();
-  return () => { alive = false; };
-}, []);
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser: User | null) => {
+      if (firebaseUser) {
+        const accessToken = await firebaseUser.getIdToken();
+        let userData = { id: firebaseUser.uid, name: firebaseUser.displayName, email: firebaseUser.email };
+        try {
+          const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+          if (userDoc.exists()) {
+            userData = userDoc.data() as UserType;
+          }
+        } catch (error) {
+          console.log('Erro ao buscar dados do Firestore:', error);
+        }
+        setState({ user: userData, accessToken, loading: false });
+        await SecureStore.setItemAsync(TOKEN_KEY, accessToken);
+        await SecureStore.setItemAsync(USER_KEY, JSON.stringify(userData));
+      } else {
+        setState({ user: null, accessToken: null, loading: false });
+        await SecureStore.deleteItemAsync(TOKEN_KEY);
+        await SecureStore.deleteItemAsync(USER_KEY);
+      }
+    });
+    return unsubscribe;
+  }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
-    // Preparando a estrutura para quando o matheus terminar java, devo criar const res = await api.post('/auth/login', { email, password });
-    // const { accessToken, user } = res.data;
-    const accessToken = 'mock-token';
-    const user = { id: '1', name: 'Usuário', email };
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+      const accessToken = await firebaseUser.getIdToken();
+      let userData = { id: firebaseUser.uid, name: firebaseUser.displayName, email: firebaseUser.email };
 
-    await SecureStore.setItemAsync(TOKEN_KEY, accessToken);
-    await SecureStore.setItemAsync(USER_KEY, JSON.stringify(user));
-    setState({ user, accessToken, loading: false });
+      const userDoc = await getDoc(doc(db, 'users', firebaseUser.uid));
+      if (userDoc.exists()) {
+        userData = userDoc.data() as UserType;
+      }
+
+      setState({ user: userData, accessToken, loading: false });
+      await SecureStore.setItemAsync(TOKEN_KEY, accessToken);
+      await SecureStore.setItemAsync(USER_KEY, JSON.stringify(userData));
+    } catch (error) {
+      throw error;
+    }
   }, []);
 
   const signUp = useCallback(async (name: string, email: string, password: string) => {
-    // Colocar depois await api.post('/auth/signup', { name, email, password });
-    // Em seguida, opcionalmente logar automaticamente:
-    await signIn(email, password);
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const firebaseUser = userCredential.user;
+
+      await updateProfile(firebaseUser, { displayName: name });
+      await setDoc(doc(db, 'users', firebaseUser.uid), { id: firebaseUser.uid, name, email });
+
+      await signIn(email, password);
+    } catch (error) {
+      throw error;
+    }
   }, [signIn]);
 
   const signOut = useCallback(async () => {
+    await firebaseSignOut(auth);
     await SecureStore.deleteItemAsync(TOKEN_KEY);
     await SecureStore.deleteItemAsync(USER_KEY);
     setState({ user: null, accessToken: null, loading: false });
