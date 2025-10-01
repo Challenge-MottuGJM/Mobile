@@ -3,6 +3,9 @@ import * as SecureStore from 'expo-secure-store';
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut as firebaseSignOut, updateProfile, User } from 'firebase/auth';
 import { doc, getFirestore, setDoc, getDoc } from 'firebase/firestore';
 import { app } from '../services/firebaseConfig';
+import { auth } from '../services/firebaseConfig';
+
+
 
 type UserType = { id: string; name: string | null; email: string | null };
 type AuthState = { user: UserType | null; accessToken: string | null; loading: boolean };
@@ -16,10 +19,9 @@ type AuthContextType = {
 
 export const AuthContext = createContext<AuthContextType>({} as any);
 
-const TOKEN_KEY = 'auth/token';
-const USER_KEY = 'auth/user';
+const TOKEN_KEY = 'auth_token';
+const USER_KEY  = 'auth_user';
 
-const auth = getAuth(app);
 const db = getFirestore(app);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -92,19 +94,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signUp = useCallback(async (name: string, email: string, password: string) => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const firebaseUser = userCredential.user;
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    const firebaseUser = userCredential.user;
 
-      await updateProfile(firebaseUser, { displayName: name });
+    await updateProfile(firebaseUser, { displayName: name });
+    await setDoc(doc(db, 'users', firebaseUser.uid), { id: firebaseUser.uid, name, email });
 
-      await setDoc(doc(db, 'users', firebaseUser.uid), { id: firebaseUser.uid, name, email });
-
-      await signIn(email, password);
-    } catch (error) {
-      throw error;
-    }
-  }, [signIn]);
+    await signIn(email, password);
+  } catch (error) {
+    console.error('Firebase signUp error:', error);
+    throw error;
+  }
+}, [signIn]);
 
   const signOut = useCallback(async () => {
     await firebaseSignOut(auth);
