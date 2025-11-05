@@ -1,0 +1,110 @@
+{
+  "common": {
+    "ok": "OK",
+    "cancel": "Cancelar",
+    "error": "Error",
+    "success": "Éxito"
+  },
+  "vagas": {
+    "title": "Plazas",
+    "hint": "Toca para más información, o mantén presionado para marcar la plaza como mantenimiento.",
+    "legend": {
+      "free": "Libre",
+      "busy": "Ocupada",
+      "maintenance": "Mantenimiento"
+    },
+    "noSlots": "Sin plazas para este sector",
+    "details": "Detalles de la plaza",
+    "slot": "Plaza",
+    "sector": "Sector",
+    "status": "Estado",
+    "occupy": "Ocupar",
+    "release": "Liberar"
+    },
+    "cadastro": {
+    "title": "Registro de Vehículos",
+    "statusPlaceholder": "Estado (tipo de problema)",
+    "datePlaceholder": "Fecha de admisión del vehículo (dd/mm/aaaa)",
+    "model": "Modelo",
+    "brand": "Marca",
+    "plate": "Placa (letras y números)",
+    "chassis": "Chasis",
+    "vehicleType": "Tipo de vehículo",
+    "vehicleTypePlaceholder": "Seleccione el tipo de vehículo",
+    "saveBtn": "Guardar vehículo",
+    "updateBtn": "Actualizar vehículo",
+    "saved": "¡Vehículo registrado con éxito!",
+    "updated": "¡Vehículo actualizado con éxito!",
+    "saveError": "No se pudo guardar el vehículo.",
+    "fillAll": "Complete todos los campos."
+  },
+  "editar": {
+    "title": "Editar Vehículo",
+    "datePlaceholder": "Fecha de admisión",
+    "vehicle": "Vehículo",
+    "saveBtn": "Guardar cambios",
+    "updated": "¡Vehículo actualizado con éxito!",
+    "saveError": "No se pudieron guardar los cambios.",
+    "loadError": "No fue posible cargar los datos del vehículo.",
+    "idMissing": "No se encontró el ID del vehículo."
+  },
+  "home": {
+    "register": "Registrar vehículos",
+    "list": "Lista de vehículos",
+    "edit": "Editar vehículos",
+    "slots": "Plazas",
+    "devs": "Desarrolladores",
+    "settings": "Configuraciones"
+  },
+  "settings": {
+    "title": "Idioma de la aplicación",
+    "languageChangedTitle": "Idioma cambiado",
+    "languageChangedMsg": "Los cambios de idioma se han aplicado.",
+    "changeError": "No fue posible cambiar el idioma.",
+    "loadError": "No fue posible cargar la preferencia de idioma."
+},
+  "integrantes": {
+    "header": "Devs",
+    "title": "Desarrolladores"
+},
+ "lista": {
+    "pageTitle": "Vehículos Registrados",
+    "status": "Estado",
+    "admission": "Admisión",
+    "plate": "Placa",
+    "vehicle": "Vehículo",
+    "chassis": "Chasis",
+    "editBtn": "Editar",
+    "deleteBtn": "Eliminar",
+    "loading": "Cargando...",
+    "empty": "No hay vehículos registrados."
+  },
+  "auth": {
+    "signIn": "Iniciar sesión",
+    "signingIn": "Iniciando...",
+    "signOut": "Cerrar sesión",
+    "signingOut": "Cerrando...",
+    "account": "Cuenta",
+    "emailPlaceholder": "Correo electrónico",
+    "passwordPlaceholder": "Contraseña",
+    "createAccount": "Crear cuenta",
+    "errors": {
+      "emailRequired": "Ingrese el correo electrónico.",
+      "emailInvalid": "Correo electrónico inválido.",
+      "passwordRequired": "Ingrese la contraseña.",
+      "passwordMin": "La contraseña debe tener al menos 6 caracteres.",
+      "general": "No fue posible iniciar sesión. Verifique los datos e inténtelo nuevamente."
+    }
+},
+"signup": {
+    "title": "Crear cuenta",
+    "namePlaceholder": "Nombre",
+    "submit": "Registrar",
+    "sending": "Enviando...",
+    "errors": {
+      "nameRequired": "Ingrese el nombre.",
+      "nameShort": "Nombre muy corto.",
+      "general": "No fue posible registrar. Verifique los datos e inténtelo nuevamente."
+    }
+  }
+}

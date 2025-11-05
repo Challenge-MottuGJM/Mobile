@@ -1,0 +1,112 @@
+{
+  "common": {
+    "error": "Erro",
+    "success": "Sucesso",
+    "ok": "OK",
+    "cancel": "Cancelar"
+  },
+  "vagas": {
+    "title": "Vagas",
+    "hint": "Toque para mais informações, ou segure para marcar a vaga como manutenção.",
+    "legend": {
+      "free": "Livre",
+      "busy": "Ocupada",
+      "maintenance": "Manutenção"
+    },
+    "noSlots": "Sem vagas para este setor",
+    "details": "Detalhes da vaga",
+    "slot": "Vaga",
+    "sector": "Setor",
+    "status": "Status",
+    "occupy": "Ocupar",
+    "release": "Liberar"
+  },
+  "cadastro": {
+    "title": "Cadastro de Veículos",
+    "statusPlaceholder": "Status (tipo de problema)",
+    "datePlaceholder": "Data de admissão do veículo (dd/mm/aaaa)",
+    "model": "Modelo",
+    "brand": "Marca",
+    "plate": "Placa (letras e números)",
+    "chassis": "Chassi",
+    "vehicleType": "Tipo de veículo",
+    "vehicleTypePlaceholder": "Selecione o tipo de veículo",
+    "saveBtn": "Salvar Veículo",
+    "updateBtn": "Atualizar veículo",
+    "saved": "Veículo cadastrado com sucesso!",
+    "updated": "Veículo atualizado com sucesso!",
+    "saveError": "Não foi possível salvar o veículo.",
+    "fillAll": "Preencha todos os campos."
+  },
+  "editar": {
+    "title": "Editar Veículo",
+    "datePlaceholder": "Data de admissão",
+    "vehicle": "Veículo",
+    "saveBtn": "Salvar Alterações",
+    "updated": "Veículo atualizado com sucesso!",
+    "saveError": "Não foi possível salvar as alterações.",
+    "loadError": "Não foi possível carregar os dados do veículo.",
+    "idMissing": "ID do veículo não encontrado."
+  },
+  "home": {
+    "register": "Cadastrar veículos",
+    "list": "Lista de veículos",
+    "edit": "Editar veículos",
+    "slots": "Vagas",
+    "devs": "Desenvolvedores",
+    "settings": "Configurações"
+  },
+  "settings": {
+    "title": "Idioma do aplicativo",
+    "languageChangedTitle": "Idioma alterado",
+    "languageChangedMsg": "As mudanças de idioma foram aplicadas.",
+    "changeError": "Não foi possível alterar o idioma.",
+    "loadError": "Não foi possível carregar a preferência de idioma."
+  },
+    "integrantes": {
+    "header": "Devs",
+    "title": "Desenvolvedores"
+  },
+  "lista": {
+    "pageTitle": "Veículos Cadastrados",
+    "status": "Status",
+    "admission": "Admissão",
+    "plate": "Placa",
+    "vehicle": "Veículo",
+    "chassis": "Chassi",
+    "editBtn": "Editar",
+    "deleteBtn": "Excluir",
+    "loading": "Carregando...",
+    "empty": "Nenhum veículo cadastrado."
+},
+"auth": {
+    "signIn": "Entrar",
+    "signingIn": "Entrando...",
+    "signOut": "Sair",
+    "signingOut": "Saindo...",
+    "account": "Conta",
+    "emailPlaceholder": "E-mail",
+    "passwordPlaceholder": "Senha",
+    "createAccount": "Criar conta",
+    "errors": {
+      "emailRequired": "Informe o e-mail.",
+      "emailInvalid": "E-mail inválido.",
+      "passwordRequired": "Informe a senha.",
+      "passwordMin": "Senha deve ter ao menos 6 caracteres.",
+      "general": "Não foi possível entrar. Verifique os dados e tente novamente."
+    }
+},
+"signup": {
+    "title": "Criar conta",
+    "namePlaceholder": "Nome",
+    "submit": "Cadastrar",
+    "sending": "Enviando...",
+    "errors": {
+      "nameRequired": "Informe o nome.",
+      "nameShort": "Nome muito curto.",
+      "general": "Não foi possível cadastrar. Verifique os dados e tente novamente."
+    }
+  }
+}
+
+

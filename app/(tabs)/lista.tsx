@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/themeContext';
 import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useTranslation } from 'react-i18next';
 
 type CadastroVeiculo = {
   id: number;
@@ -26,6 +27,7 @@ export default function Lista() {
   const router = useRouter();
   const { isDark } = useTheme();
   const colors = isDark ? DARK_BG : LIGHT_BG;
+  const { t } = useTranslation();
 
   const carregarCadastrosLocal = useCallback(async () => {
     try {
@@ -69,33 +71,33 @@ export default function Lista() {
   const renderItem = ({ item }: { item: CadastroVeiculo }) => (
     <View style={styles.item}>
       <Text style={styles.titulo}>{item.modelo} ({item.marca})</Text>
-      <Text style={styles.body}>Status: {item.status}</Text>
-      <Text style={styles.body}>Admissão: {item.admissao}</Text>
-      <Text style={styles.body}>Placa: {item.placa}</Text>
-      <Text style={styles.body}>Veículo: {item.veiculo}</Text>
-      <Text style={styles.body}>Chassi: {item.chassi}</Text>
+      <Text style={styles.body}>{t('lista.status')}: {item.status}</Text>
+      <Text style={styles.body}>{t('lista.admission')}: {item.admissao}</Text>
+      <Text style={styles.body}>{t('lista.plate')}: {item.placa}</Text>
+      <Text style={styles.body}>{t('lista.vehicle')}: {item.veiculo}</Text>
+      <Text style={styles.body}>{t('lista.chassis')}: {item.chassi}</Text>
       <View style={styles.botoes}>
         <TouchableOpacity style={styles.botaoEditar} onPress={() => editar(item)}>
-          <Text style={styles.textoBotao}>Editar</Text>
+          <Text style={styles.textoBotao}>{t('lista.editBtn')}</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.botaoExcluir} onPress={() => excluir(item.id)}>
-          <Text style={styles.textoBotao}>Excluir</Text>
+          <Text style={styles.textoBotao}>{t('lista.deleteBtn')}</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 
-  if (loading) return <Text style={[styles.body, { padding: 20 }]}>Carregando...</Text>;
+  if (loading) return <Text style={[styles.body, { padding: 20 }]}>{t('lista.loading')}</Text>;
   return (
     <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
       <View style={styles.wrapper}>
-        <Text style={[styles.tituloPagina, { color: isDark ? '#fff' : '#333' }]}>Veículos Cadastrados</Text>
+        <Text style={[styles.tituloPagina, { color: isDark ? '#fff' : '#333' }]}>{t('lista.pageTitle')}</Text>
         <FlatList
           data={cadastros}
           keyExtractor={(item) => String(item.id)}
           renderItem={renderItem}
           contentContainerStyle={styles.lista}
-          ListEmptyComponent={<Text style={[styles.vazio, styles.body]}>Nenhum veículo cadastrado.</Text>}
+          ListEmptyComponent={<Text style={[styles.vazio, styles.body]}>{t('lista.empty')}</Text>}
           refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
         />
       </View>

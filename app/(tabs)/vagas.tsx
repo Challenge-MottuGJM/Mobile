@@ -116,7 +116,7 @@ export default function Estacionamento() {
       >
         <Text style={[styles.title, { color: isDark ? '#fff' : '#333' }]}>Vagas</Text>
         <Text style={[styles.hint, { color: isDark ? '#fff' : '#333' }]}>
-          Toque para mais informações • Segure para marcar como manutenção!
+          Toque para detalhes - Segure para manutenção
         </Text>
 
         <View style={styles.legendaWrap}>

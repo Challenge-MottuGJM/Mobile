@@ -5,15 +5,16 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from "../../context/themeContext";
 import { LIGHT_BG, DARK_BG } from "../../theme/gradients";
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
 
-const API_BASE_URL = "http://localhost:5148";
-
+const API_BASE_URL = "http://localhost:5148"; // depois troque para EXPO_PUBLIC_API_URL no seu http.ts unificado
 
 export default function Editar() {
   const router = useRouter();
   const params = useLocalSearchParams();
   const { isDark } = useTheme();
   const colors = isDark ? DARK_BG : LIGHT_BG;
+  const { t } = useTranslation();
 
   const [status, setStatus] = useState('');
   const [admissao, setAdmissao] = useState('');
@@ -25,56 +26,57 @@ export default function Editar() {
 
   useEffect(() => {
     const carregarDados = async () => {
-  if (!params.id) return;
-  try {
-    const response = await axios.get(`${API_BASE_URL}/motos/${params.id}`);
-    const item = response.data;
-    setStatus(item.status);
-    setAdmissao(item.admissao);
-    setModelo(item.modelo);
-    setMarca(item.marca);
-    setPlaca(item.placa);
-    setVeiculo(item.veiculo);
-    setChassi(item.chassi);
-  } catch (error) {
-    Alert.alert('Erro', 'Não foi possível carregar os dados do veículo.');
-    console.log(error);
-  }
-};
+      if (!params.id) return;
+      try {
+        const response = await axios.get(`${API_BASE_URL}/motos/${params.id}`);
+        const item = response.data;
+        setStatus(item.status);
+        setAdmissao(item.admissao);
+        setModelo(item.modelo);
+        setMarca(item.marca);
+        setPlaca(item.placa);
+        setVeiculo(item.veiculo);
+        setChassi(item.chassi);
+      } catch (error) {
+        Alert.alert(t('common.error'), t('editar.loadError'));
+        console.log(error);
+      }
+    };
 
     carregarDados();
   }, [params.id]);
 
   const salvarEdicao = async () => {
-  if (!params.id) return Alert.alert('Erro', 'ID do veículo não encontrado.');
-  const novosDados = { status, admissao, modelo, marca, placa, veiculo, chassi };
-  try {
-    await axios.put(`${API_BASE_URL}/motos/atualizar/${params.id}`, novosDados);
-    Alert.alert('Sucesso', 'Veículo atualizado com sucesso!');
-    router.replace('/lista');
-  } catch (error) {
-    Alert.alert('Erro', 'Não foi possível salvar as alterações.');
-    console.log(error);
-  }
-};
-
-
+    if (!params.id) {
+      Alert.alert(t('common.error'), t('editar.idMissing'));
+      return;
+    }
+    const novosDados = { status, admissao, modelo, marca, placa, veiculo, chassi };
+    try {
+      await axios.put(`${API_BASE_URL}/motos/atualizar/${params.id}`, novosDados);
+      Alert.alert(t('common.success'), t('editar.updated'));
+      router.replace('/lista');
+    } catch (error) {
+      Alert.alert(t('common.error'), t('editar.saveError'));
+      console.log(error);
+    }
+  };
 
   return (
     <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={[styles.titulo, { color: isDark ? '#fff' : '#333' }]}>Editar Veículo</Text>
+        <Text style={[styles.titulo, { color: isDark ? '#fff' : '#333' }]}>{t('editar.title')}</Text>
 
-        <TextInput style={styles.input} placeholder="Status (tipo de problema)" value={status} onChangeText={setStatus} />
-        <TextInput style={styles.input} placeholder="Data de admissão" keyboardType="numeric" value={admissao} onChangeText={setAdmissao} />
-        <TextInput style={styles.input} placeholder="Modelo" value={modelo} onChangeText={setModelo} />
-        <TextInput style={styles.input} placeholder="Marca" value={marca} onChangeText={setMarca} />
-        <TextInput style={styles.input} placeholder="Placa" value={placa} onChangeText={setPlaca} />
-        <TextInput style={styles.input} placeholder="Veículo" value={veiculo} onChangeText={setVeiculo} />
-        <TextInput style={styles.input} placeholder="Chassi" value={chassi} onChangeText={setChassi} />
+        <TextInput style={styles.input} placeholder={t('cadastro.statusPlaceholder')} value={status} onChangeText={setStatus} />
+        <TextInput style={styles.input} placeholder={t('editar.datePlaceholder')} keyboardType="numeric" value={admissao} onChangeText={setAdmissao} />
+        <TextInput style={styles.input} placeholder={t('cadastro.model')} value={modelo} onChangeText={setModelo} />
+        <TextInput style={styles.input} placeholder={t('cadastro.brand')} value={marca} onChangeText={setMarca} />
+        <TextInput style={styles.input} placeholder={t('cadastro.plate')} value={placa} onChangeText={setPlaca} />
+        <TextInput style={styles.input} placeholder={t('editar.vehicle')} value={veiculo} onChangeText={setVeiculo} />
+        <TextInput style={styles.input} placeholder={t('cadastro.chassis')} value={chassi} onChangeText={setChassi} />
 
         <TouchableOpacity style={styles.botao} onPress={salvarEdicao}>
-          <Text style={styles.textoBotao}>Salvar Alterações</Text>
+          <Text style={styles.textoBotao}>{t('editar.saveBtn')}</Text>
         </TouchableOpacity>
       </ScrollView>
     </LinearGradient>

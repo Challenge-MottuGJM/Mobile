@@ -5,16 +5,18 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Integrante from "../Components/Integrante";
 import { useTheme } from "../../context/themeContext";
 import { LIGHT_BG, DARK_BG } from "../../theme/gradients";
+import { useTranslation } from 'react-i18next';
 
 export default function MinhaTela() {
   const { isDark } = useTheme();
   const colors = isDark ? DARK_BG : LIGHT_BG;
+  const { t } = useTranslation();
 
   return (
     <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-        <Stack.Screen options={{ title: "Devs" }} />
-        <Text style={[styles.title, { color: isDark ? '#fff' : '#333' }]}>Desenvolvedores</Text>
+        <Stack.Screen options={{ title: t('integrantes.header') }} />
+        <Text style={[styles.title, { color: isDark ? '#fff' : '#333' }]}>{t('integrantes.title')}</Text>
 
         <Integrante
           nome="Gustavo de Aguiar"

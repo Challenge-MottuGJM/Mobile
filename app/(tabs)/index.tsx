@@ -4,11 +4,12 @@ import { Image, ScrollView, StyleSheet, Text, TouchableOpacity } from "react-nat
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/themeContext';
 import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
-
+import { useTranslation } from 'react-i18next';
 
 export default function Tela() {
   const { isDark } = useTheme();
   const colors = isDark ? DARK_BG : LIGHT_BG;
+  const { t } = useTranslation();
 
   return (
     <LinearGradient
@@ -17,11 +18,7 @@ export default function Tela() {
       end={{ x: 1, y: 1 }}
       style={{ flex: 1 }}
     >
-      <Stack.Screen
-        options={{
-          headerShown: false,
-        }}
-      />
+      <Stack.Screen options={{ headerShown: false }} />
 
       <StatusBar style="light" />
 
@@ -33,35 +30,38 @@ export default function Tela() {
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/cadastro")}>
-          <Text style={styles.buttonText}>Cadastrar veículos</Text>
+          <Text style={styles.buttonText}>{t('home.register')}</Text>
         </TouchableOpacity>
       </ScrollView>
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/lista")}>
-          <Text style={styles.buttonText}>Lista de veículos</Text>
+          <Text style={styles.buttonText}>{t('home.list')}</Text>
         </TouchableOpacity>
       </ScrollView>
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/editar")}>
-          <Text style={styles.buttonText}>Editar veículos</Text>
+          <Text style={styles.buttonText}>{t('home.edit')}</Text>
         </TouchableOpacity>
       </ScrollView>
 
       <ScrollView contentContainerStyle={styles.linksContainer}>
         <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/vagas")}>
-          <Text style={styles.buttonText}>Vagas</Text>
-        </TouchableOpacity>
-      </ScrollView>
-      
-      <ScrollView contentContainerStyle={styles.linksContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/integrantes")}>
-          <Text style={styles.buttonText}>Desenvolvedores</Text>
+          <Text style={styles.buttonText}>{t('home.slots')}</Text>
         </TouchableOpacity>
       </ScrollView>
 
-      
+      <ScrollView contentContainerStyle={styles.linksContainer}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/integrantes")}>
+          <Text style={styles.buttonText}>{t('home.devs')}</Text>
+        </TouchableOpacity>
+      </ScrollView>
+
+      <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/settings")}>
+        <Text style={styles.buttonText}>Configurações</Text>
+      </TouchableOpacity>
+
 
     </LinearGradient>
   );

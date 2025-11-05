@@ -5,12 +5,13 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/themeContext';
 import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
 import { useRouter } from 'expo-router';
-
+import { useTranslation } from 'react-i18next';
 
 export default function Signup() {
   const { isDark } = useTheme();
   const colors = isDark ? DARK_BG : LIGHT_BG;
   const { signUp } = useContext(AuthContext);
+  const { t } = useTranslation();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -21,41 +22,40 @@ export default function Signup() {
   function validate() {
     const next: typeof errors = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!name.trim()) next.name = 'Informe o nome.';
-    else if (name.trim().length < 2) next.name = 'Nome muito curto.';
-    if (!email.trim()) next.email = 'Informe o e-mail.';
-    else if (!emailRegex.test(email.trim())) next.email = 'E-mail inválido.';
-    if (!password) next.password = 'Informe a senha.';
-    else if (password.length < 6) next.password = 'Senha deve ter ao menos 6 caracteres.';
+    if (!name.trim()) next.name = t('signup.errors.nameRequired');
+    else if (name.trim().length < 2) next.name = t('signup.errors.nameShort');
+    if (!email.trim()) next.email = t('auth.errors.emailRequired');
+    else if (!emailRegex.test(email.trim())) next.email = t('auth.errors.emailInvalid');
+    if (!password) next.password = t('auth.errors.passwordRequired');
+    else if (password.length < 6) next.password = t('auth.errors.passwordMin');
     setErrors(next);
     return Object.keys(next).length === 0;
   }
 
   const router = useRouter();
 
-const handleSignup = async () => {
-  if (!validate()) return;
-  setBusy(true);
-  setErrors({});
-  try {
-    await signUp(name.trim(), email.trim(), password);
-    router.replace('/(tabs)');
-  } catch (e: any) {
-    setErrors({ general: 'Não foi possível cadastrar. Verifique os dados e tente novamente.' });
-  } finally {
-    setBusy(false);
-  }
-};
-
+  const handleSignup = async () => {
+    if (!validate()) return;
+    setBusy(true);
+    setErrors({});
+    try {
+      await signUp(name.trim(), email.trim(), password);
+      router.replace('/(tabs)');
+    } catch (e: any) {
+      setErrors({ general: t('signup.errors.general') });
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <LinearGradient colors={colors} start={{ x:0, y:0 }} end={{ x:1, y:1 }} style={{ flex: 1 }}>
       <View style={styles.wrapper}>
-        <Text style={[styles.title, { color: isDark ? '#fff' : '#333' }]}>Criar conta</Text>
+        <Text style={[styles.title, { color: isDark ? '#fff' : '#333' }]}>{t('signup.title')}</Text>
 
         <TextInput
           style={styles.input}
-          placeholder="Nome"
+          placeholder={t('signup.namePlaceholder')}
           value={name}
           onChangeText={(v) => { setName(v); if (errors.name) setErrors({ ...errors, name: undefined }); }}
         />
@@ -63,7 +63,7 @@ const handleSignup = async () => {
 
         <TextInput
           style={styles.input}
-          placeholder="E-mail"
+          placeholder={t('auth.emailPlaceholder')}
           value={email}
           onChangeText={(v) => { setEmail(v); if (errors.email) setErrors({ ...errors, email: undefined }); }}
           autoCapitalize="none"
@@ -73,7 +73,7 @@ const handleSignup = async () => {
 
         <TextInput
           style={styles.input}
-          placeholder="Senha"
+          placeholder={t('auth.passwordPlaceholder')}
           value={password}
           onChangeText={(v) => { setPassword(v); if (errors.password) setErrors({ ...errors, password: undefined }); }}
           secureTextEntry
@@ -83,7 +83,7 @@ const handleSignup = async () => {
         {errors.general ? <Text style={[styles.error, { textAlign: 'center' }]}>{errors.general}</Text> : null}
 
         <TouchableOpacity style={styles.primaryBtn} onPress={handleSignup} disabled={busy}>
-          <Text style={styles.btnText}>{busy ? 'Enviando...' : 'Cadastrar'}</Text>
+          <Text style={styles.btnText}>{busy ? t('signup.sending') : t('signup.submit')}</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>

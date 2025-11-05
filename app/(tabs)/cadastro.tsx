@@ -9,6 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalSearchParams } from 'expo-router';
 import { useTheme } from "../../context/themeContext";
 import { LIGHT_BG, DARK_BG } from "../../theme/gradients";
+import { useTranslation } from 'react-i18next';
 
 type CadastroVeiculo = {
   id: number;
@@ -44,13 +45,14 @@ export default function Cadastro() {
   const params = useLocalSearchParams();
   const { isDark } = useTheme();
   const colors = isDark ? DARK_BG : LIGHT_BG;
+  const { t } = useTranslation();
 
   const [editando, setEditando] = useState(false);
   const [produtoEditandoId, setProdutoEditandoId] = useState<number | null>(null);
 
   const salvarVeiculo = async () => {
     if (!status || !admissao || !modelo || !marca || !placa || !veiculo || !chassi) {
-      Alert.alert('Erro', 'Preencha todos os campos.');
+      Alert.alert(t('common.error'), t('cadastro.fillAll'));
       return;
     }
 
@@ -81,12 +83,15 @@ export default function Cadastro() {
       }
 
       await AsyncStorage.setItem('cadastrosveiculos', JSON.stringify(cadastrosveiculos));
-      Alert.alert('Sucesso', editando ? 'Veículo atualizado com sucesso!' : 'Veículo cadastrado com sucesso!');
+      Alert.alert(
+        t('common.success'),
+        editando ? t('cadastro.updated') : t('cadastro.saved')
+      );
       limparCampos();
       setEditando(false);
       setProdutoEditandoId(null);
     } catch (error) {
-      Alert.alert('Erro', 'Não foi possível salvar o veículo.');
+      Alert.alert(t('common.error'), t('cadastro.saveError'));
       console.error(error);
     }
   };
@@ -106,42 +111,65 @@ export default function Cadastro() {
     <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={{ flex: 1 }}>
         <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
-          <Text style={[styles.title, { color: isDark ? '#fff' : '#333' }]}>Cadastro de Veículos</Text>
+          <Text style={[styles.title, { color: isDark ? '#fff' : '#333' }]}>
+            {t('cadastro.title')}
+          </Text>
 
           <TextInput
             style={styles.input}
-            placeholder="Status (tipo de problema)"
+            placeholder={t('cadastro.statusPlaceholder')}
             value={status}
             onChangeText={setStatus}
           />
           <TextInput
             style={styles.input}
-            placeholder="Data de admissão do veículo (dd/mm/aaaa)"
+            placeholder={t('cadastro.datePlaceholder')}
             keyboardType="numeric"
             value={admissao}
             onChangeText={text => setAdmissao(formatarData(text))}
           />
-          <TextInput style={styles.input} placeholder="Modelo" value={modelo} onChangeText={setModelo} />
-          <TextInput style={styles.input} placeholder="Marca" value={marca} onChangeText={setMarca} />
-          <TextInput style={styles.input} placeholder="Placa (letras e números)" value={placa} onChangeText={setPlaca} />
-          <TextInput style={styles.input} placeholder="Chassi" value={chassi} onChangeText={setChassi} />
+          <TextInput
+            style={styles.input}
+            placeholder={t('cadastro.model')}
+            value={modelo}
+            onChangeText={setModelo}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder={t('cadastro.brand')}
+            value={marca}
+            onChangeText={setMarca}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder={t('cadastro.plate')}
+            value={placa}
+            onChangeText={setPlaca}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder={t('cadastro.chassis')}
+            value={chassi}
+            onChangeText={setChassi}
+          />
 
-          <Text style={styles.label}>Tipo de veículo</Text>
+          <Text style={styles.label}>{t('cadastro.vehicleType')}</Text>
           <Picker
             selectedValue={veiculo}
             onValueChange={(itemValue) => setVeiculo(itemValue)}
             style={styles.picker}
             itemStyle={Platform.OS === 'ios' ? { fontFamily: 'Inter_400Regular' } : undefined}
           >
-            <Picker.Item label="Selecione o tipo de veículo" value="" />
+            <Picker.Item label={t('cadastro.vehicleTypePlaceholder')} value="" />
             {veiculos.map((tipo) => (
               <Picker.Item key={tipo} label={tipo} value={tipo} />
             ))}
           </Picker>
 
-          {/* Botão customizado para controlar a fonte */}
           <TouchableOpacity style={styles.btnSalvar} onPress={salvarVeiculo} activeOpacity={0.85}>
-            <Text style={styles.textoBotao}>{editando ? 'Atualizar veículo' : 'Salvar Veículo'}</Text>
+            <Text style={styles.textoBotao}>
+              {editando ? t('cadastro.updateBtn') : t('cadastro.saveBtn')}
+            </Text>
           </TouchableOpacity>
         </ScrollView>
       </KeyboardAvoidingView>
@@ -174,7 +202,7 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     backgroundColor: 'white',
     marginBottom: 12,
-    fontFamily: 'Inter_400Regular', // iOS aceita via itemStyle; Android pode ignorar
+    fontFamily: 'Inter_400Regular',
   },
   btnSalvar: {
     backgroundColor: '#28a745',
