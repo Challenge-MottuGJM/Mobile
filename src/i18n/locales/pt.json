@@ -7,19 +7,36 @@
   },
   "vagas": {
     "title": "Vagas",
-    "hint": "Toque para mais informações, ou segure para marcar a vaga como manutenção.",
+    "hint": "Toque para detalhes - Segure para manutenção",
     "legend": {
       "free": "Livre",
-      "busy": "Ocupada",
+      "occupied": "Ocupada",
       "maintenance": "Manutenção"
     },
-    "noSlots": "Sem vagas para este setor",
-    "details": "Detalhes da vaga",
-    "slot": "Vaga",
-    "sector": "Setor",
-    "status": "Status",
-    "occupy": "Ocupar",
-    "release": "Liberar"
+    "sectors": {
+      "analysis": "Análise",
+      "mechanicalIssues": "Problemas mecânicos",
+      "externalIssues": "Problemas externos"
+    },
+    "noSpots": "Sem vagas para este setor",
+    "detailTitle": "Detalhes da vaga",
+    "detail": {
+      "spot": "Vaga",
+      "sector": "Setor",
+      "status": "Status"
+    },
+    "actions": {
+      "occupy": "Ocupar",
+      "release": "Liberar",
+      "maintenance": "Manutenção"
+    },
+    "action": "Ação",
+    "simulate": {
+      "occupy": "Ocupar vaga (simulação). Integração virá da API .NET.",
+      "release": "Liberar vaga (simulação). Integração virá da API .NET."
+    },
+    "markedMaintenance": "Vaga marcada como manutenção.",
+    "updateFailed": "Falha ao atualizar. A ação funcionará quando a API estiver ativa."
   },
   "cadastro": {
     "title": "Cadastro de Veículos",
@@ -106,6 +123,13 @@
       "nameShort": "Nome muito curto.",
       "general": "Não foi possível cadastrar. Verifique os dados e tente novamente."
     }
+  },
+  "tabs": {
+    "home": "Início",
+    "list": "Lista",
+    "slots": "Vagas",
+    "login": "Login",
+    "settings": "Idioma"
   }
 }
 

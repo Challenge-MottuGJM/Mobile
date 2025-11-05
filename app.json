@@ -20,7 +20,9 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "useNextNotificationsApi": true,
+      "package": "com.gudeaguiar.EasyFinder"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -28,10 +30,25 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      "expo-secure-store"
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#512CF0"
+        }
+      ]
     ],
     "extra": {
-"EXPO_PUBLIC_API_URL": "http://192.168.15.9:8081"
+      "EXPO_PUBLIC_API_URL": "http://192.168.15.9:8081",
+      "EXPO_PUBLIC_GIT_SHA": "dev",
+      "EXPO_PUBLIC_ENV": "dev",
+      "EXPO_PUBLIC_PROJECT_ID": "30d4db57-4db9-4388-923b-12fe70175245",
+      "router": {},
+      "eas": {
+        "projectId": "30d4db57-4db9-4388-923b-12fe70175245"
+      }
+    },
+    "owner": "gudeaguiar"
   }
-}
 }

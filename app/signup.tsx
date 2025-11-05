@@ -1,9 +1,9 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { AuthContext } from '../../context/AuthContext';
+import { AuthContext } from '../context/AuthContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '../../context/themeContext';
-import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
+import { useTheme } from '../context/themeContext';
+import { LIGHT_BG, DARK_BG } from '../theme/gradients';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 

@@ -7,19 +7,36 @@
   },
   "vagas": {
     "title": "Plazas",
-    "hint": "Toca para más información, o mantén presionado para marcar la plaza como mantenimiento.",
+    "hint": "Toque para detalles - Mantenga para mantenimiento",
     "legend": {
       "free": "Libre",
-      "busy": "Ocupada",
+      "occupied": "Ocupada",
       "maintenance": "Mantenimiento"
     },
-    "noSlots": "Sin plazas para este sector",
-    "details": "Detalles de la plaza",
-    "slot": "Plaza",
-    "sector": "Sector",
-    "status": "Estado",
-    "occupy": "Ocupar",
-    "release": "Liberar"
+    "sectors": {
+      "analysis": "Análisis",
+      "mechanicalIssues": "Problemas mecánicos",
+      "externalIssues": "Problemas externos"
+    },
+    "noSpots": "Sin plazas para este sector",
+    "detailTitle": "Detalles de la plaza",
+    "detail": {
+      "spot": "Plaza",
+      "sector": "Sector",
+      "status": "Estado"
+    },
+    "actions": {
+      "occupy": "Ocupar",
+      "release": "Liberar",
+      "maintenance": "Mantenimiento"
+    },
+    "action": "Acción",
+    "simulate": {
+      "occupy": "Ocupar plaza (simulación). La integración vendrá de la API .NET.",
+      "release": "Liberar plaza (simulación). La integración vendrá de la API .NET."
+    },
+    "markedMaintenance": "Plaza marcada como mantenimiento.",
+    "updateFailed": "No se pudo actualizar. La acción funcionará cuando la API esté activa."
     },
     "cadastro": {
     "title": "Registro de Vehículos",
@@ -106,5 +123,12 @@
       "nameShort": "Nombre muy corto.",
       "general": "No fue posible registrar. Verifique los datos e inténtelo nuevamente."
     }
+  },
+  "tabs": {
+    "home": "Inicio",
+    "list": "Lista",
+    "slots": "Plazas",
+    "login": "Login",
+    "settings": "Idioma"
   }
 }

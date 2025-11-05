@@ -57,12 +57,6 @@ export default function Tela() {
           <Text style={styles.buttonText}>{t('home.devs')}</Text>
         </TouchableOpacity>
       </ScrollView>
-
-      <TouchableOpacity style={styles.button} onPress={() => router.push("/(tabs)/settings")}>
-        <Text style={styles.buttonText}>Configurações</Text>
-      </TouchableOpacity>
-
-
     </LinearGradient>
   );
 }
@@ -82,18 +76,18 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: "#5e17eb",
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderColor: 'black',
     paddingHorizontal: 24,
-    borderRadius: 12,
+    borderRadius: 50,
     elevation: 5,
-    width: 200,
+    width: 190,
     alignItems: 'center',
   },
   logo: {
-    width: 380,
-    height: 500,
-    marginTop: 10,
+    width: 400,
+    height: 400,
+    marginTop: 30,
   },
   buttonText: {
     color: '#ffffff',

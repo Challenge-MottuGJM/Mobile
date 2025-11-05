@@ -8,6 +8,9 @@ import { listarVagas, atualizarVaga } from '../../services/vagas';
 
 type Vaga = { id: string; setor: string; ocupada: boolean };
 
+type ActionState = { busy: boolean; err?: string | null };
+const initialAction: ActionState = { busy: false, err: null };
+
 const TOTAL_COLUNAS = 5;
 const setoresUI = ['Análise', 'Problemas mecânicos', 'Problemas externos'] as const;
 const COLORS = {
@@ -20,7 +23,7 @@ const COLORS = {
 export default function Estacionamento() {
   const { isDark } = useTheme();
   const colors = isDark ? DARK_BG : LIGHT_BG;
-
+  const [action, setAction] = useState<ActionState>(initialAction);
   const [vagasPorSetor, setVagasPorSetor] = useState<Record<string, Vaga[][]>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);

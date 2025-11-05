@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, Pressable } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/themeContext';
 import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
+import { router } from 'expo-router';
 
 type Lang = 'pt-BR' | 'es';
 
@@ -70,6 +71,9 @@ export default function Settings() {
         >
           <Text style={styles.buttonText}>Español</Text>
         </TouchableOpacity>
+        <Pressable onPress={() => router.push('/about')}>
+          <Text style={{ color: '#ffffffff', fontWeight: '600' }}>Sobre o App</Text>
+        </Pressable>
       </View>
     </LinearGradient>
   );
