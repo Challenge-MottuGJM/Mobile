@@ -1,85 +1,27 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, Button, Alert } from 'react-native';
-import * as Application from 'expo-application';
-import * as Notifications from 'expo-notifications';
-import * as Device from 'expo-device';
+import React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 
-const version = Application.nativeApplicationVersion ?? '0.0.0';
-const build = Application.nativeBuildVersion ?? '1';
-const name = Application.applicationName ?? 'EasyFinder';
-
-const commit = (process.env?.EXPO_PUBLIC_GIT_SHA as string) || 'dev';
-const env = (process.env?.EXPO_PUBLIC_ENV as string) || 'dev';
-const projectId = (process.env?.EXPO_PUBLIC_PROJECT_ID as string) || '';
-
-Notifications.setNotificationHandler({
-  handleNotification: async () => ({
-    shouldShowAlert: true,
-    shouldPlaySound: true,
-    shouldSetBadge: false,
-    shouldShowBanner: true,
-    shouldShowList: true,
-  }),
-});
-
-async function registerForPushAsync(): Promise<string> {
-  if (!Device.isDevice) throw new Error('Simulador não suporta push.');
-  let { status } = await Notifications.getPermissionsAsync();
-  if (status !== 'granted') {
-    const req = await Notifications.requestPermissionsAsync();
-    status = req.status;
-  }
-  if (status !== 'granted') throw new Error('Permissão negada.');
-  const token = await Notifications.getExpoPushTokenAsync({ projectId });
-  return token.data;
-}
+const commit = process.env.EXPO_PUBLIC_GIT_SHA || 'dev';
 
 export default function About() {
-  const [expoToken, setExpoToken] = useState<string>();
-
-  const handleGetToken = async () => {
-    try {
-      const t = await registerForPushAsync();
-      setExpoToken(t);
-      Alert.alert('Expo token copiado', t);
-      console.log('ExpoPushToken:', t);
-    } catch (e: any) {
-      Alert.alert('Erro ao obter token', e?.message ?? String(e));
-    }
-  };
-
-  const handleLocalNotification = async () => {
-    await Notifications.scheduleNotificationAsync({
-      content: { title: 'EasyFinder', body: 'Notificação local de teste' },
-      trigger: null,
-    });
-  };
+  const short = commit.slice(0, 7);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Sobre o App</Text>
-      <Text>Nome: {name}</Text>
-      <Text>Versão: {version} ({build})</Text>
-      <Text>Ambiente: {env}</Text>
-      <Text>Commit: {commit.slice(0, 7)}</Text>
-
-      <View style={{ height: 12 }} />
-      <Button title="Gerar token de push" onPress={handleGetToken} />
-      <View style={{ height: 8 }} />
-      <Button title="Notificação local" onPress={handleLocalNotification} />
-
-      {expoToken ? (
-        <>
-          <View style={{ height: 8 }} />
-          <Text selectable>Token: {expoToken}</Text>
-        </>
-      ) : null}
+      <Text style={styles.label}>Commit</Text>
+      <TouchableOpacity onPress={() => Alert.alert('Commit', commit)}>
+        <Text style={styles.hash}>{short}</Text>
+      </TouchableOpacity>
+      <Text style={styles.hint}>Toque para ver o hash completo.</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20, gap: 8, backgroundColor: '#818181ff' },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 12, color: '#000000ff' },
-  text: { color: '#000000ff' }
+  container: { flex:1, padding:20, justifyContent:'center', alignItems:'center', gap:8 },
+  title: { fontSize:20, fontWeight:'600', marginBottom:8 },
+  label: { fontSize:12, opacity:0.7 },
+  hash: { fontFamily:'Courier', fontSize:16 },
+  hint: { fontSize:12, opacity:0.6, marginTop:4 }
 });

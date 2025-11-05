@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
-    "start": "expo start",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
-    "web": "expo start --web"
+    "start": "powershell -NoProfile -Command \"$env:EXPO_PUBLIC_GIT_SHA=(git rev-parse HEAD); npx expo start\"",
+    "android": "powershell -NoProfile -Command \"$env:EXPO_PUBLIC_GIT_SHA=(git rev-parse HEAD); npx expo run:android\"",
+    "ios": "powershell -NoProfile -Command \"$env:EXPO_PUBLIC_GIT_SHA=(git rev-parse HEAD); npx expo run:ios\"",
+    "dev:clear": "powershell -NoProfile -Command \"$env:EXPO_PUBLIC_GIT_SHA=(git rev-parse HEAD); npx expo start -c\""
   },
   "dependencies": {
     "@expo-google-fonts/inter": "^0.4.2",
