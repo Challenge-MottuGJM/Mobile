@@ -1,10 +1,15 @@
-import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import Constants from 'expo-constants';
+import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../context/themeContext';
+import { LIGHT_BG, DARK_BG } from '../theme/gradients';
+import { router } from 'expo-router';
 
-const commit = process.env.EXPO_PUBLIC_GIT_SHA || 'dev';
+const commit: string =
+  (Constants.expoConfig?.extra as any)?.EXPO_PUBLIC_GIT_SHA ?? 'dev';
 
 export default function About() {
-  const short = commit.slice(0, 7);
+  const short = commit.slice(0, 10);
 
   return (
     <View style={styles.container}>
@@ -13,7 +18,7 @@ export default function About() {
       <TouchableOpacity onPress={() => Alert.alert('Commit', commit)}>
         <Text style={styles.hash}>{short}</Text>
       </TouchableOpacity>
-      <Text style={styles.hint}>Toque para ver o hash completo.</Text>
+      <Text style={styles.hint}>Toque acima para ver o hash de commit completo.</Text>
     </View>
   );
 }

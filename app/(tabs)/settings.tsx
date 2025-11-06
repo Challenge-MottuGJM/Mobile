@@ -88,19 +88,23 @@ const styles = StyleSheet.create({
     fontFamily: 'Inter_700Bold',
   },
   button: {
-    backgroundColor: 'rgba(94,23,235,0.75)',
+    backgroundColor: 'rgba(0, 0, 0, 0.46)',
     paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 10,
+    borderRadius: 30,
     marginBottom: 12,
     alignItems: 'center',
+    borderWidth: 4,
+    borderColor: '#c4c4c4c0',
   },
   buttonActive: {
     backgroundColor: '#5e17eb',
+    borderWidth: 4,
+    borderColor: '#0df00dff',
   },
   buttonText: {
     color: '#fff',
     fontFamily: 'Inter_600SemiBold',
-    fontSize: 16,
+    fontSize: 18,
   },
 });
