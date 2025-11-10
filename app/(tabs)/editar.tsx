@@ -7,7 +7,7 @@ import { LIGHT_BG, DARK_BG } from "../../theme/gradients";
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
-const API_BASE_URL = "http://localhost:5148"; // depois troque para EXPO_PUBLIC_API_URL no seu http.ts unificado
+const API_BASE_URL = "http://localhost:5148";
 
 export default function Editar() {
   const router = useRouter();

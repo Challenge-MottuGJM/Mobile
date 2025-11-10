@@ -116,6 +116,7 @@
 "signup": {
     "title": "Crear cuenta",
     "namePlaceholder": "Nombre",
+    "backtoLogin": "Volver a login",
     "submit": "Registrar",
     "sending": "Enviando...",
     "errors": {

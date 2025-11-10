@@ -12,6 +12,7 @@ export default function Signup() {
   const colors = isDark ? DARK_BG : LIGHT_BG;
   const { signUp } = useContext(AuthContext);
   const { t } = useTranslation();
+  const router = useRouter();
 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -31,8 +32,6 @@ export default function Signup() {
     setErrors(next);
     return Object.keys(next).length === 0;
   }
-
-  const router = useRouter();
 
   const handleSignup = async () => {
     if (!validate()) return;
@@ -85,6 +84,14 @@ export default function Signup() {
         <TouchableOpacity style={styles.primaryBtn} onPress={handleSignup} disabled={busy}>
           <Text style={styles.btnText}>{busy ? t('signup.sending') : t('signup.submit')}</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.secondaryBtn}
+          onPress={() => router.replace('/login')}
+          disabled={busy}
+        >
+          <Text style={styles.secondaryText}>{t('Voltar para login') || 'Voltar ao login'}</Text>
+        </TouchableOpacity>
       </View>
     </LinearGradient>
   );
@@ -97,4 +104,6 @@ const styles = StyleSheet.create({
   error: { color: '#C62828', marginBottom: 8, fontFamily: 'Inter_600SemiBold' },
   primaryBtn: { backgroundColor: '#5e17eb', padding: 14, borderRadius: 8, alignItems: 'center', marginTop: 8 },
   btnText: { color: '#fff', fontFamily: 'Inter_600SemiBold' },
+  secondaryBtn: { marginTop: 12, padding: 12, alignItems: 'center' },
+  secondaryText: { color: '#fff', opacity: 0.9, fontFamily: 'Inter_600SemiBold' },
 });

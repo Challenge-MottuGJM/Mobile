@@ -22,12 +22,6 @@ type CadastroVeiculo = {
   chassi: string;
 };
 
-//quando coloar a api, coloca post/put
-//await Notifications.scheduleNotificationAsync({
-  //content: { title: 'EasyFinder', body: 'Você salvou sua moto!' },
-  //trigger: null, // dispara imediatamente
-//});
-
 const veiculos = ['Carro', 'Motocicleta'];
 
 function formatarData(text: string) {

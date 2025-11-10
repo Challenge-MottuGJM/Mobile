@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { useTheme } from '../../context/themeContext';
 import { LIGHT_BG, DARK_BG } from '../../theme/gradients';
-import { listarVagas, atualizarVaga } from '../../services/vagas';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type Vaga = { id: string; setor: string; ocupada: boolean };
 
@@ -20,18 +20,27 @@ const COLORS = {
   texto: '#fff',
 };
 
+const STORAGE_VAGAS = 'mock_vagas_grid';
+const STORAGE_MANUT = 'vagas_manutencao_map';
+const STORAGE_OCUP = 'vagas_ocupacao_map';
+
+type ManutencaoMap = Record<string, boolean>;
+type OcupacaoMap = Record<string, boolean>;
+
 export default function Estacionamento() {
   const { isDark } = useTheme();
   const colors = isDark ? DARK_BG : LIGHT_BG;
   const [action, setAction] = useState<ActionState>(initialAction);
-  const [vagasPorSetor, setVagasPorSetor] = useState<Record<string, Vaga[][]>>({});
+  const [vagasPorSetor, setVagasPorSetor] = useState<Record<string, (Vaga & { manutencao?: boolean })[][]>>({});
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+
+  const [manutencaoMap, setManutencaoMap] = useState<ManutencaoMap>({});
+  const [ocupacaoMap, setOcupacaoMap] = useState<OcupacaoMap>({});
 
   const [selecionada, setSelecionada] = useState<Vaga | null>(null);
   const fecharSheet = () => setSelecionada(null);
 
-  // Mapeia nomes vindos da API para os rótulos da UI
   const mapSetor = (s: string) => {
     const k = s?.toLowerCase();
     if (k.includes('anali')) return 'Análise';
@@ -60,34 +69,43 @@ export default function Estacionamento() {
     return organizado;
   }, []);
 
+  const gerarGridLocal = async () => {
+    const TOTAL_VAGAS = 54;
+    const tmp: Vaga[] = [];
+    for (let i = 0; i < TOTAL_VAGAS; i++) {
+      const setorIdx = Math.floor(i / 18);
+      const base = setoresUI[setorIdx];
+      tmp.push({ id: `V${i + 1}`, setor: base, ocupada: false });
+    }
+    await AsyncStorage.setItem(STORAGE_VAGAS, JSON.stringify(tmp));
+    return tmp;
+  };
+
   const carregar = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const data = await listarVagas();
-      const vagas: Vaga[] = Array.isArray(data)
-        ? data.map((x: any, i: number) => ({
-            id: String(x.id ?? x.vagaId ?? `V${i + 1}`),
-            setor: String(x.setor ?? 'analise'),
-            ocupada:
-              String(x.status ?? (x.ocupada ? 'ocupada' : 'livre')).toLowerCase() === 'ocupada' ||
-              !!x.ocupada,
-          }))
-        : [];
-      if (!vagas.length) throw new Error('Sem dados da API');
-      setVagasPorSetor(organizarEmLinhas(vagas));
-    } catch {
-      const TOTAL_VAGAS = 54;
-      const tmp: Vaga[] = [];
-      for (let i = 0; i < TOTAL_VAGAS; i++) {
-        const setorIdx = Math.floor(i / 18);
-        const base = setoresUI[setorIdx];
-        tmp.push({ id: `V${i + 1}`, setor: base, ocupada: false });
-      }
-      setoresUI.forEach(s => {
-        const indices = tmp.map((v, i) => (v.setor === s ? i : -1)).filter(i => i !== -1);
-        indices.sort(() => 0.5 - Math.random()).slice(0, 3).forEach(i => (tmp[i].ocupada = true));
+      const saved = await AsyncStorage.getItem(STORAGE_VAGAS);
+      const base: Vaga[] = saved ? JSON.parse(saved) : await gerarGridLocal();
+
+      const savedManut = await AsyncStorage.getItem(STORAGE_MANUT);
+      const manut: ManutencaoMap = savedManut ? JSON.parse(savedManut) : {};
+      setManutencaoMap(manut);
+
+      const savedOcup = await AsyncStorage.getItem(STORAGE_OCUP);
+      const ocup: OcupacaoMap = savedOcup ? JSON.parse(savedOcup) : {};
+      setOcupacaoMap(ocup);
+
+      const organizado = organizarEmLinhas(
+        base.map(v => ({ ...v, ocupada: ocup[v.id] ?? v.ocupada }))
+      ) as Record<string, (Vaga & { manutencao?: boolean })[][]>;
+
+      Object.keys(organizado).forEach(setor => {
+        organizado[setor] = organizado[setor].map(linha =>
+          linha.map(v => ({ ...v, manutencao: !!manut[v.id] }))
+        );
       });
-      setVagasPorSetor(organizarEmLinhas(tmp));
+
+      setVagasPorSetor(organizado);
     } finally {
       setLoading(false);
     }
@@ -99,17 +117,46 @@ export default function Estacionamento() {
     try { setRefreshing(true); await carregar(); } finally { setRefreshing(false); }
   };
 
-  const onManutencao = async (vaga: Vaga) => {
-    try {
-      await atualizarVaga(vaga.id, { status: 'manutencao' });
-      await carregar();
-      Alert.alert('Ok', 'Vaga marcada como manutenção.');
-    } catch (e: any) {
-      Alert.alert('Aviso', e?.message || 'Falha ao atualizar. A ação funcionará quando a API estiver ativa.');
-    }
+  const setManutencaoPersist = async (vaga: Vaga, value: boolean) => {
+    const next = { ...manutencaoMap, [vaga.id]: value };
+    setManutencaoMap(next);
+    await AsyncStorage.setItem(STORAGE_MANUT, JSON.stringify(next));
+    setVagasPorSetor(prev => {
+      const novo: typeof prev = {};
+      for (const setor of Object.keys(prev)) {
+        novo[setor] = prev[setor].map(linha =>
+          linha.map(v => v.id === vaga.id ? { ...v, manutencao: value } : v)
+        );
+      }
+      return novo;
+    });
   };
 
-  const corVaga = (v: Vaga) => (v.ocupada ? COLORS.ocupada : COLORS.livre);
+  const onManutencaoLocal = async (vaga: Vaga) => {
+    const novoValor = !manutencaoMap[vaga.id];
+    await setManutencaoPersist(vaga, novoValor);
+    Alert.alert('Ok', novoValor ? 'Vaga marcada como manutenção.' : 'Vaga removida da manutenção.');
+  };
+
+  const setOcupacaoPersist = async (vaga: Vaga, value: boolean) => {
+    const next = { ...ocupacaoMap, [vaga.id]: value };
+    setOcupacaoMap(next);
+    await AsyncStorage.setItem(STORAGE_OCUP, JSON.stringify(next));
+    setVagasPorSetor(prev => {
+      const novo: typeof prev = {};
+      for (const setor of Object.keys(prev)) {
+        novo[setor] = prev[setor].map(linha =>
+          linha.map(v => v.id === vaga.id ? { ...v, ocupada: value } : v)
+        );
+      }
+      return novo;
+    });
+  };
+
+  const corVaga = (v: Vaga & { manutencao?: boolean }) => {
+    if (v.manutencao) return COLORS.manutencao;
+    return v.ocupada ? COLORS.ocupada : COLORS.livre;
+  };
 
   return (
     <LinearGradient colors={colors} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={{ flex: 1 }}>
@@ -151,9 +198,11 @@ export default function Estacionamento() {
                         key={vaga.id}
                         style={[styles.vaga, { backgroundColor: corVaga(vaga) }]}
                         onPress={() => setSelecionada(vaga)}
-                        onLongPress={() => onManutencao(vaga)}
+                        onLongPress={() => onManutencaoLocal(vaga)}
                       >
-                        <Text style={styles.text}>{vaga.ocupada ? 'Ocupada' : vaga.id}</Text>
+                        <Text style={styles.text}>
+                          {(vaga as any).manutencao ? 'Manut.' : (vaga.ocupada ? 'Ocupada' : vaga.id)}
+                        </Text>
                       </TouchableOpacity>
                     ))}
                   </View>
@@ -188,27 +237,21 @@ export default function Estacionamento() {
                 Setor: {mapSetor(selecionada.setor)}
               </Text>
               <Text style={[styles.sheetText, { color: isDark ? '#ddd' : '#444' }]}>
-                Status: {selecionada.ocupada ? 'Ocupada' : 'Livre'}
+                Status: {manutencaoMap[selecionada.id] ? 'Manutenção' : (ocupacaoMap[selecionada.id] ? 'Ocupada' : 'Livre')}
               </Text>
 
               <View style={styles.sheetActions}>
-                {!selecionada.ocupada ? (
+                {!ocupacaoMap[selecionada.id] ? (
                   <TouchableOpacity
                     style={[styles.btn, { backgroundColor: COLORS.ocupada }]}
-                    onPress={() => {
-                      Alert.alert('Ação', 'Ocupar vaga (simulação). Integração virá da API .NET.');
-                      fecharSheet();
-                    }}
+                    onPress={async () => { await setOcupacaoPersist(selecionada, true); fecharSheet(); }}
                   >
                     <Text style={styles.btnText}>Ocupar</Text>
                   </TouchableOpacity>
                 ) : (
                   <TouchableOpacity
                     style={[styles.btn, { backgroundColor: COLORS.livre }]}
-                    onPress={() => {
-                      Alert.alert('Ação', 'Liberar vaga (simulação). Integração virá da API .NET.');
-                      fecharSheet();
-                    }}
+                    onPress={async () => { await setOcupacaoPersist(selecionada, false); fecharSheet(); }}
                   >
                     <Text style={styles.btnText}>Liberar</Text>
                   </TouchableOpacity>
@@ -217,11 +260,9 @@ export default function Estacionamento() {
                 <TouchableOpacity
                   style={[styles.btn, { backgroundColor: COLORS.manutencao }]}
                   onPress={async () => {
-                    try {
-                      await onManutencao(selecionada);
-                    } finally {
-                      fecharSheet();
-                    }
+                    const novo = !manutencaoMap[selecionada.id];
+                    await setManutencaoPersist(selecionada, novo);
+                    fecharSheet();
                   }}
                 >
                   <Text style={styles.btnText}>Manutenção</Text>
